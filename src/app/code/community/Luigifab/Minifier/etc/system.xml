@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Created L/27/06/2011
+ * Updated S/26/06/2021
+ *
+ * Copyright 2011-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://www.luigifab.fr/openmage/minifier
+ *
+ * This program is free software, you can redistribute it or modify
+ * it under the terms of the GNU General Public License (GPL) as published
+ * by the free software foundation, either version 2 of the license, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but without any warranty, without even the implied warranty of
+ * merchantability or fitness for a particular purpose. See the
+ * GNU General Public License (GPL) for more details.
+-->
+
+<config>
+	<tabs>
+		<luigifab translate="label">
+			<label>Tools</label>
+			<sort_order>103</sort_order>
+		</luigifab>
+	</tabs>
+	<sections>
+		<minifier translate="label">
+			<label>Minify and cache</label>
+			<tab>luigifab</tab>
+			<sort_order>70</sort_order>
+			<show_in_default>1</show_in_default>
+			<show_in_website>1</show_in_website>
+			<show_in_store>1</show_in_store>
+			<groups>
+				<help>
+					<frontend_model>minifier/adminhtml_config_help</frontend_model>
+					<sort_order>0</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<show_in_store>1</show_in_store>
+				</help>
+				<general translate="label">
+					<label>General</label>
+					<sort_order>1</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>0</show_in_website>
+					<show_in_store>0</show_in_store>
+					<expanded>1</expanded>
+					<fields>
+						<autolang translate="label">
+							<label>Automatically set the language of the backend</label>
+							<comment>HTTP_ACCEPT_LANGUAGE</comment>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+						</autolang>
+						<translations_overwrite translate="label">
+							<label>Prioritize translations of theme</label>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>2</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+						</translations_overwrite>
+						<translations_share translate="label">
+							<label>Share translations when developer mode is enabled</label>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>3</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+						</translations_share>
+						<favicon translate="label">
+							<label>Only use the favicon.ico</label>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>4</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+						</favicon>
+					</fields>
+				</general>
+				<gzip translate="label">
+					<label><![CDATA[<abbr title="HyperText Markup Language">HTML</abbr> compression]]></label>
+					<sort_order>2</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<show_in_store>1</show_in_store>
+					<expanded>1</expanded>
+					<fields>
+						<enabled translate="label comment">
+							<label>Enable</label>
+							<comment>If yes, only if the webserver don't do it.</comment>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</enabled>
+					</fields>
+				</gzip>
+				<html translate="label">
+					<label><![CDATA[<abbr title="HyperText Markup Language">HTML</abbr> minification]]></label>
+					<sort_order>3</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<show_in_store>1</show_in_store>
+					<expanded>1</expanded>
+					<fields>
+						<enabled translate="label comment">
+							<label>Enable</label>
+							<comment><![CDATA[May cause display problems.]]></comment>
+							<frontend_type>select</frontend_type>
+							<source_model>minifier/source_minify</source_model>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</enabled>
+						<exclude translate="label comment">
+							<label>Exclude list</label>
+							<comment><![CDATA[Based on <em>getFullActionName(/)</em>.]]></comment>
+							<frontend_type>textarea</frontend_type>
+							<sort_order>2</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</exclude>
+					</fields>
+				</html>
+				<cssjs translate="label">
+					<label><![CDATA[<abbr title="Cascading Style Sheets">CSS</abbr> and <abbr title="JavaScript">JS</abbr> minification]]></label>
+					<sort_order>4</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<show_in_store>1</show_in_store>
+					<expanded>1</expanded>
+					<fields>
+						<enabled translate="label comment">
+							<label>Enable</label>
+							<comment><![CDATA[May cause display problems. Get source files only form <em>layout</em>.]]></comment>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</enabled>
+						<!--exclude translate="label">
+							<label>Exclude list</label>
+							<frontend_type>textarea</frontend_type>
+							<sort_order>2</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</exclude-->
+						<cleancss translate="label">
+							<label>Full path to clean-css</label>
+							<comment><![CDATA[<a href="https://github.com/jakubpawlowicz/clean-css-cli">github.com/jakubpawlowicz/clean-css-cli</a>]]></comment>
+							<sort_order>3</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+						</cleancss>
+						<uglifyjs translate="label">
+							<label>Full path to uglify-js</label>
+							<comment><![CDATA[<a href="https://github.com/mishoo/uglifyjs">github.com/mishoo/uglifyjs</a>]]></comment>
+							<sort_order>4</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+						</uglifyjs>
+						<check translate="label">
+							<label>Programs version</label>
+							<frontend_type>label</frontend_type>
+							<frontend_model>minifier/adminhtml_config_check</frontend_model>
+							<sort_order>5</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+						</check>
+						<debug translate="label">
+							<label>Debug</label>
+							<frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+							<sort_order>10</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+						</debug>
+						<debug_enabled translate="label">
+							<label>Enable</label>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>11</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+						</debug_enabled>
+						<debug_password translate="label">
+							<label>Password</label>
+							<frontend_type>text</frontend_type>
+							<sort_order>12</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+							<depends>
+								<debug_enabled>1</debug_enabled>
+							</depends>
+						</debug_password>
+						<debug_links>
+							<frontend_type>label</frontend_type>
+							<frontend_model>minifier/adminhtml_config_debug</frontend_model>
+							<sort_order>13</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+							<depends>
+								<debug_enabled>1</debug_enabled>
+							</depends>
+						</debug_links>
+						<extra translate="label">
+							<label>Cache solution</label>
+							<frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+							<sort_order>20</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+						</extra>
+						<solution translate="label comment">
+							<label>Enable</label>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>21</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+						</solution>
+						<value translate="label comment">
+							<label>Numeric value</label>
+							<comment>When developer mode is enabled, a new value is generated each time a page is loaded.</comment>
+							<frontend_type>text</frontend_type>
+							<validate>required-entry validate-greater-than-zero</validate>
+							<sort_order>22</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+						</value>
+						<config>
+							<frontend_model>minifier/adminhtml_config_server</frontend_model>
+							<sort_order>23</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+						</config>
+					</fields>
+				</cssjs>
+			</groups>
+		</minifier>
+		<general>
+			<groups>
+				<locale>
+					<fields>
+						<timezone>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</timezone>
+					</fields>
+				</locale>
+			</groups>
+		</general>
+		<dev>
+			<groups>
+				<debug>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<show_in_store>1</show_in_store>
+					<fields>
+						<profiler>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</profiler>
+						<template_hints>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</template_hints>
+						<template_hints_blocks>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</template_hints_blocks>
+					</fields>
+				</debug>
+				<js>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<show_in_store>1</show_in_store>
+					<fields>
+						<merge_files translate="comment">
+							<frontend_model>minifier/adminhtml_config_comment</frontend_model>
+							<comment><![CDATA[See {{Minify and cache}}.]]></comment>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</merge_files>
+					</fields>
+				</js>
+				<css>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<show_in_store>1</show_in_store>
+					<fields>
+						<merge_css_files translate="comment">
+							<frontend_model>minifier/adminhtml_config_comment</frontend_model>
+							<comment><![CDATA[See {{Minify and cache}}.]]></comment>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</merge_css_files>
+					</fields>
+				</css>
+			</groups>
+		</dev>
+	</sections>
+</config>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Created S/20/06/2015
+ * Updated M/29/09/2020
+ *
+ * Copyright 2011-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://www.luigifab.fr/openmage/minifier
+ *
+ * This program is free software, you can redistribute it or modify
+ * it under the terms of the GNU General Public License (GPL) as published
+ * by the free software foundation, either version 2 of the license, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but without any warranty, without even the implied warranty of
+ * merchantability or fitness for a particular purpose. See the
+ * GNU General Public License (GPL) for more details.
+-->
+
+<config>
+	<modules>
+		<Luigifab_Minifier>
+			<active>true</active>
+			<codePool>community</codePool>
+			<depends>
+				<Mage_Core />
+				<Mage_Adminhtml />
+				<Mage_Page />
+			</depends>
+			<!-- see https://www.luigifab.fr/openmage/modules for more information -->
+			<update>https://www.luigifab.fr/openmage/rss.xml</update>
+		</Luigifab_Minifier>
+	</modules>
+</config>

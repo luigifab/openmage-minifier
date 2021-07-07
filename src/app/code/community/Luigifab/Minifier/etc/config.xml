@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Created L/27/06/2011
+ * Updated D/09/05/2021
+ *
+ * Copyright 2011-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://www.luigifab.fr/openmage/minifier
+ *
+ * This program is free software, you can redistribute it or modify
+ * it under the terms of the GNU General Public License (GPL) as published
+ * by the free software foundation, either version 2 of the license, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but without any warranty, without even the implied warranty of
+ * merchantability or fitness for a particular purpose. See the
+ * GNU General Public License (GPL) for more details.
+-->
+
+<config>
+	<modules>
+		<Luigifab_Minifier>
+			<version>4.0.0</version>
+		</Luigifab_Minifier>
+	</modules>
+	<global>
+		<blocks>
+			<minifier>
+				<class>Luigifab_Minifier_Block</class>
+			</minifier>
+			<adminhtml>
+				<rewrite>
+					<page>Luigifab_Minifier_Block_Adminhtml_Rewrite_Html</page>
+					<page_head>Luigifab_Minifier_Block_Adminhtml_Rewrite_Head</page_head>
+				</rewrite>
+			</adminhtml>
+			<page>
+				<rewrite>
+					<html>Luigifab_Minifier_Block_Rewrite_Html</html>
+					<html_head>Luigifab_Minifier_Block_Rewrite_Head</html_head>
+				</rewrite>
+			</page>
+		</blocks>
+		<helpers>
+			<minifier>
+				<class>Luigifab_Minifier_Helper</class>
+			</minifier>
+		</helpers>
+		<models>
+			<minifier>
+				<class>Luigifab_Minifier_Model</class>
+			</minifier>
+			<core>
+				<rewrite>
+					<design_package>Luigifab_Minifier_Model_Rewrite_Package</design_package>
+					<translate>Luigifab_Minifier_Model_Rewrite_Translate</translate>
+				</rewrite>
+			</core>
+		</models>
+		<resources>
+			<minifier_setup>
+				<setup>
+					<module>Luigifab_Minifier</module>
+					<class>Mage_Core_Model_Resource_Setup</class>
+				</setup>
+				<connection>
+					<use>core_setup</use>
+				</connection>
+			</minifier_setup>
+		</resources>
+	</global>
+	<adminhtml>
+		<events>
+			<clean_media_cache_after>
+				<observers>
+					<minifier>
+						<class>minifier/observer</class>
+						<method>clearMinifiedFiles</method>
+					</minifier>
+				</observers>
+			</clean_media_cache_after>
+			<admin_system_config_changed_section_minifier>
+				<observers>
+					<minifier>
+						<class>minifier/observer</class>
+						<method>updateConfig</method>
+					</minifier>
+				</observers>
+			</admin_system_config_changed_section_minifier>
+			<controller_action_predispatch_adminhtml_index_changeLocale>
+				<observers>
+					<minifier>
+						<class>minifier/observer</class>
+						<method>changeBackgendLanguage</method>
+					</minifier>
+				</observers>
+			</controller_action_predispatch_adminhtml_index_changeLocale>
+			<core_locale_set_locale>
+				<observers>
+					<minifier>
+						<class>minifier/observer</class>
+						<method>setBackendLanguage</method>
+					</minifier>
+				</observers>
+			</core_locale_set_locale>
+		</events>
+		<layout>
+			<updates>
+				<minifier>
+					<file>luigifab/minifier.xml</file>
+				</minifier>
+			</updates>
+		</layout>
+		<translate>
+			<modules>
+				<Luigifab_Minifier>
+					<files>
+						<default>Luigifab_Minifier.csv</default>
+					</files>
+				</Luigifab_Minifier>
+			</modules>
+		</translate>
+	</adminhtml>
+	<frontend>
+		<layout>
+			<updates>
+				<minifier>
+					<file>luigifab/minifier.xml</file>
+				</minifier>
+			</updates>
+		</layout>
+		<routers>
+			<minifier>
+				<use>standard</use>
+				<args>
+					<module>Luigifab_Minifier</module>
+					<frontName>minifier</frontName>
+				</args>
+			</minifier>
+		</routers>
+	</frontend>
+	<admin>
+		<routers>
+			<adminhtml>
+				<args>
+					<modules>
+						<Luigifab_Minifier before="Mage_Adminhtml">Luigifab_Minifier</Luigifab_Minifier>
+					</modules>
+				</args>
+			</adminhtml>
+		</routers>
+	</admin>
+	<default>
+		<minifier>
+			<html>
+				<exclude>adminhtml/permissions_role/editrole
+adminhtml/sales_order_create/index
+adminhtml/extension_custom/edit</exclude>
+			</html>
+			<cssjs>
+				<value>20110627203010</value>
+			</cssjs>
+		</minifier>
+	</default>
+</config>

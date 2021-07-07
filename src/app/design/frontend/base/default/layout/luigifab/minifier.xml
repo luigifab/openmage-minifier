@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Created J/26/07/2018
+ * Updated D/15/11/2020
+ *
+ * Copyright 2011-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://www.luigifab.fr/openmage/minifier
+ *
+ * This program is free software, you can redistribute it or modify
+ * it under the terms of the GNU General Public License (GPL) as published
+ * by the free software foundation, either version 2 of the license, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but without any warranty, without even the implied warranty of
+ * merchantability or fitness for a particular purpose. See the
+ * GNU General Public License (GPL) for more details.
+-->
+
+<layout version="0.1.0">
+	<default>
+		<reference name="head">
+			<action method="setTemplate">
+				<template>luigifab/minifier/head.phtml</template>
+				<old>page/html/head.phtml</old>
+			</action>
+			<action method="unsetChild" ifconfig="minifier/cssjs/enabled">
+				<name>optional_zip_countries</name>
+			</action>
+		</reference>
+	</default>
+	<catalog_product_view>
+		<reference name="product.info.options.wrapper">
+			<action method="unsetChild" ifconfig="minifier/cssjs/enabled">
+				<name>html_calendar</name>
+			</action>
+		</reference>
+	</catalog_product_view>
+	<catalogsearch_advanced_index>
+		<reference name="content">
+			<action method="unsetChild" ifconfig="minifier/cssjs/enabled">
+				<name>html_calendar</name>
+			</action>
+		</reference>
+	</catalogsearch_advanced_index>
+</layout>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Created D/03/01/2016
+ * Updated D/15/11/2020
+ *
+ * Copyright 2011-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://www.luigifab.fr/openmage/minifier
+ *
+ * This program is free software, you can redistribute it or modify
+ * it under the terms of the GNU General Public License (GPL) as published
+ * by the free software foundation, either version 2 of the license, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but without any warranty, without even the implied warranty of
+ * merchantability or fitness for a particular purpose. See the
+ * GNU General Public License (GPL) for more details.
+-->
+
+<layout version="0.1.0">
+	<default>
+		<reference name="head">
+			<action method="setTemplate">
+				<name>luigifab/minifier/head.phtml</name>
+				<old>page/head.phtml</old>
+			</action>
+			<action method="removeItem" ifconfig="minifier/cssjs/enabled">
+				<type>js</type>
+				<name>extjs/fix-defer-before.js</name>
+			</action>
+			<action method="unsetChild" ifconfig="minifier/cssjs/enabled">
+				<name>optional_zip_countries</name>
+			</action>
+			<action method="unsetChild" ifconfig="minifier/cssjs/enabled">
+				<name>head.calendar</name>
+			</action>
+		</reference>
+		<reference name="header">
+			<action method="setTemplate">
+				<template>luigifab/minifier/header.phtml</template>
+				<old>page/header.phtml</old>
+			</action>
+		</reference>
+		<reference name="menu">
+			<action method="setTemplate">
+				<template>luigifab/minifier/menu.phtml</template>
+				<old>page/menu.phtml</old>
+			</action>
+		</reference>
+		<reference name="footer">
+			<action method="setTemplate">
+				<template>luigifab/minifier/footer.phtml</template>
+				<old>page/footer.phtml</old>
+			</action>
+		</reference>
+	</default>
+</layout>

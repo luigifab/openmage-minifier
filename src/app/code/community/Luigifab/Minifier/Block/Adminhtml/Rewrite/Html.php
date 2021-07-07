@@ -1,0 +1,29 @@
+<?php
+/**
+ * Created S/20/06/2015
+ * Updated S/31/08/2019
+ *
+ * Copyright 2011-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://www.luigifab.fr/openmage/minifier
+ *
+ * This program is free software, you can redistribute it or modify
+ * it under the terms of the GNU General Public License (GPL) as published
+ * by the free software foundation, either version 2 of the license, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but without any warranty, without even the implied warranty of
+ * merchantability or fitness for a particular purpose. See the
+ * GNU General Public License (GPL) for more details.
+ */
+
+class Luigifab_Minifier_Block_Adminhtml_Rewrite_Html extends Mage_Adminhtml_Block_Page {
+
+	protected function _construct() {
+		$this->setModuleName('Mage_Adminhtml');
+	}
+
+	protected function _afterToHtml($html) {
+		return $this->helper('minifier')->afterToHtml(parent::_afterToHtml($html));
+	}
+}

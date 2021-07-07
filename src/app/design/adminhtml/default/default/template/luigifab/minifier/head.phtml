@@ -1,0 +1,59 @@
+<?php
+/**
+ * Created V/15/04/2016
+ * Updated D/15/11/2020
+ *
+ * Copyright 2011-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://www.luigifab.fr/openmage/minifier
+ *
+ * This program is free software, you can redistribute it or modify
+ * it under the terms of the GNU General Public License (GPL) as published
+ * by the free software foundation, either version 2 of the license, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but without any warranty, without even the implied warranty of
+ * merchantability or fitness for a particular purpose. See the
+ * GNU General Public License (GPL) for more details.
+ */
+
+$help = $this->helper('minifier');
+?>
+
+<title><?php echo $help->escapeEntities(html_entity_decode($this->getTitle())) ?></title>
+<meta http-equiv="Content-Type" content="<?php echo $this->getContentType() ?>" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta http-equiv="Content-Language" content="<?php echo $this->getParentBlock()->getLang() ?>" />
+<meta name="robots" content="noindex,nofollow" />
+
+<script type="text/javascript">//<![CDATA[
+var BLANK_URL = "<?php echo Mage::getDesign()->getJsUrl('blank.html') ?>",
+BLANK_IMG = "<?php echo Mage::getDesign()->getJsUrl('spacer.gif') ?>",
+BASE_URL = "<?php echo $this->getUrl('*') ?>",
+SKIN_URL = "<?php echo $this->getSkinUrl() ?>",
+FORM_KEY = "<?php echo $this->getFormKey() ?>";
+//]]></script>
+
+<link rel="icon" type="image/x-icon" href="<?php echo $this->getSkinUrl('favicon.ico') ?>" />
+<?php echo $this->getCssJsHtml() ?>
+
+<script type="text/javascript">//<![CDATA[
+Fieldset.addToPrefix(<?php echo $this->helper('adminhtml')->getCurrentUserId() ?>);
+<?php if ($this->getCanLoadExtJs()): ?>
+Ext.BLANK_IMAGE_URL = BLANK_IMG;
+Ext.UpdateManager.defaults.loadScripts = false;
+Ext.UpdateManager.defaults.disableCaching = true;
+<?php endif ?>
+//]]></script>
+
+<?php if ($this->getCanLoadTinyMce()): // TinyMCE is broken when loaded through index.php ?>
+	<script type="text/javascript" src="<?php echo Mage::getDesign()->getJsUrl('tiny_mce/tiny_mce.js') ?>"></script>
+<?php endif ?>
+<?php if (!Mage::getStoreConfigFlag('minifier/cssjs/enabled')): ?>
+	<?php echo $this->helper('core/js')->getTranslatorScript() ?>
+	<?php echo $this->getChildHtml('optional_zip_countries') ?>
+	<?php echo $this->getChildHtml('calendar') ?>
+<?php endif ?>
+
+<?php echo $this->getChildHtml() ?>

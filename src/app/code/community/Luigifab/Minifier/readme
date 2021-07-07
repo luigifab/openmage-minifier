@@ -1,0 +1,78 @@
+Docs      : https://www.luigifab.fr/openmage/minifier
+Tracker   : https://github.com/luigifab/openmage-minifier
+Composer  : https://packagist.org/packages/luigifab/openmage-minifier
+Module    : Luigifab/Minifier (ex Compressor)
+License   : GNU GPL 2+ (https://opensource.org/licenses/gpl-2.0)
+Copyright : 2011-2021 Fabrice Creuzot (luigifab) <code~luigifab~fr>
+
+
+
+
+
+IF YOU FOUND A MISTAKE OR A BUG, PLEASE, CONTACT ME (IN FRENCH OR IN ENGLISH) AT code~luigifab~fr
+CSS AND JS FILES ARE MINIFIED WITH clean-css (github.com/jakubpawlowicz/clean-css) AND uglify-js (github.com/mishoo/uglifyjs).
+ALL FILES (INCLUDING DOCUMENTATION AND TRANSLATIONS) ARE LICENSED UNDER THE TERMS OF THE GNU GPL 2+ LICENSE.
+
+
+
+Rewrite
+- adminhtml | template | page/footer.phtml    | luigifab/minifier/footer.phtml
+- adminhtml | template | page/head.phtml      | luigifab/minifier/head.phtml
+- adminhtml | template | page/header.phtml    | luigifab/minifier/header.phtml
+- adminhtml | template | page/menu.phtml      | luigifab/minifier/menu.phtml
+- frontend  | template | page/html/head.phtml | luigifab/minifier/head.phtml
+- global    | block    | adminhtml/page       | minifier/adminhtml_rewrite_html
+- global    | block    | adminhtml/page_head  | minifier/adminhtml_rewrite_head
+- global    | block    | page/html            | minifier/rewrite_html
+- global    | block    | page/html_head       | minifier/rewrite_head
+- global    | model    | core/design_package  | minifier/rewrite_package
+- global    | model    | core/translate       | minifier/rewrite_translate
+Event
+- adminhtml | admin_system_config_changed_section_minifier               | minifier/observer::updateConfig
+- adminhtml | clean_media_cache_after                                    | minifier/observer::clearMinifiedFiles
+- adminhtml | controller_action_predispatch_adminhtml_index_changeLocale | minifier/observer::changeBackgendLanguage
+- adminhtml | core_locale_set_locale                                     | minifier/observer::setBackendLanguage
+Cron
+- none
+SQL
+- update core_config_data where path like minifier/%
+- update core_config_data where path like compressor/%
+Files and directories
+- app/locale/de_AT/Luigifab_Minifier.csv
+- app/locale/de_CH/Luigifab_Minifier.csv
+- app/locale/de_DE/Luigifab_Minifier.csv
+- app/locale/es_AR/Luigifab_Minifier.csv
+- app/locale/es_CL/Luigifab_Minifier.csv
+- app/locale/es_CO/Luigifab_Minifier.csv
+- app/locale/es_CR/Luigifab_Minifier.csv
+- app/locale/es_ES/Luigifab_Minifier.csv
+- app/locale/es_MX/Luigifab_Minifier.csv
+- app/locale/es_PA/Luigifab_Minifier.csv
+- app/locale/es_PE/Luigifab_Minifier.csv
+- app/locale/es_VE/Luigifab_Minifier.csv
+- app/locale/fr_CA/Luigifab_Minifier.csv
+- app/locale/fr_CH/Luigifab_Minifier.csv
+- app/locale/fr_FR/Luigifab_Minifier.csv
+- app/locale/it_CH/Luigifab_Minifier.csv
+- app/locale/it_IT/Luigifab_Minifier.csv
+- app/locale/pl_PL/Luigifab_Minifier.csv
+- app/locale/pt_BR/Luigifab_Minifier.csv
+- app/locale/pt_PT/Luigifab_Minifier.csv
+- app/locale/ru_RU/Luigifab_Minifier.csv
+- app/locale/tr_TR/Luigifab_Minifier.csv
+- app/locale/zh_CN/Luigifab_Minifier.csv
+- app/etc/modules/Luigifab_Minifier.xml
+- app/code/community/Luigifab/Minifier/
+- app/design/adminhtml/default/default/layout/luigifab/minifier.xml
+- app/design/adminhtml/default/default/template/luigifab/minifier/
+- app/design/frontend/base/default/layout/luigifab/minifier.xml
+- app/design/frontend/base/default/template/luigifab/minifier/
+
+
+
+Translations in en-US (english/United-States) by:
+- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2011-2021
+Translations in fr-FR (français/France) by:
+- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2011-2021
+
+If you like, take some of your time to improve the translations, go to https://bit.ly/2HyCCEc

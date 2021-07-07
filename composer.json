@@ -1,0 +1,75 @@
+{
+    "type": "magento-module",
+    "name": "luigifab/openmage-minifier",
+    "description": "A module to minify CSS and JS with uglify-js and clean-css for OpenMage.",
+    "keywords": ["openmage", "openmage-module"],
+    "homepage": "https://github.com/luigifab/openmage-minifier",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Fabrice Creuzot (luigifab)",
+            "homepage": "https://www.luigifab.fr",
+            "email": "code@luigifab.fr"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/luigifab/openmage-minifier/issues",
+        "docs": "https://www.luigifab.fr/openmage/minifier"
+    },
+    "funding": [
+        {
+            "type": "other",
+            "url": "https://www.paypal.me/luigifab"
+        },
+        {
+            "type": "other",
+            "url": "https://gandi.link/f/4b904048"
+        },
+        {
+            "type": "other",
+            "url": "https://ekwateur.fr/?parrain=EKW001147103"
+        }
+    ],
+    "require": {
+        "php": ">=7.2.0",
+        "openmage/magento-lts": ">=19.4.0",
+        "ext-mbstring": "*",
+        "ext-json": "*",
+        "ext-curl": "*",
+        "ext-dom": "*"
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "map": [
+            ["src/app/locale/de_AT/Luigifab_Minifier.csv", "app/locale/de_AT/Luigifab_Minifier.csv"],
+            ["src/app/locale/de_CH/Luigifab_Minifier.csv", "app/locale/de_CH/Luigifab_Minifier.csv"],
+            ["src/app/locale/de_DE/Luigifab_Minifier.csv", "app/locale/de_DE/Luigifab_Minifier.csv"],
+            ["src/app/locale/es_AR/Luigifab_Minifier.csv", "app/locale/es_AR/Luigifab_Minifier.csv"],
+            ["src/app/locale/es_CL/Luigifab_Minifier.csv", "app/locale/es_CL/Luigifab_Minifier.csv"],
+            ["src/app/locale/es_CO/Luigifab_Minifier.csv", "app/locale/es_CO/Luigifab_Minifier.csv"],
+            ["src/app/locale/es_CR/Luigifab_Minifier.csv", "app/locale/es_CR/Luigifab_Minifier.csv"],
+            ["src/app/locale/es_ES/Luigifab_Minifier.csv", "app/locale/es_ES/Luigifab_Minifier.csv"],
+            ["src/app/locale/es_MX/Luigifab_Minifier.csv", "app/locale/es_MX/Luigifab_Minifier.csv"],
+            ["src/app/locale/es_PA/Luigifab_Minifier.csv", "app/locale/es_PA/Luigifab_Minifier.csv"],
+            ["src/app/locale/es_PE/Luigifab_Minifier.csv", "app/locale/es_PE/Luigifab_Minifier.csv"],
+            ["src/app/locale/es_VE/Luigifab_Minifier.csv", "app/locale/es_VE/Luigifab_Minifier.csv"],
+            ["src/app/locale/fr_CA/Luigifab_Minifier.csv", "app/locale/fr_CA/Luigifab_Minifier.csv"],
+            ["src/app/locale/fr_CH/Luigifab_Minifier.csv", "app/locale/fr_CH/Luigifab_Minifier.csv"],
+            ["src/app/locale/fr_FR/Luigifab_Minifier.csv", "app/locale/fr_FR/Luigifab_Minifier.csv"],
+            ["src/app/locale/it_CH/Luigifab_Minifier.csv", "app/locale/it_CH/Luigifab_Minifier.csv"],
+            ["src/app/locale/it_IT/Luigifab_Minifier.csv", "app/locale/it_IT/Luigifab_Minifier.csv"],
+            ["src/app/locale/pl_PL/Luigifab_Minifier.csv", "app/locale/pl_PL/Luigifab_Minifier.csv"],
+            ["src/app/locale/pt_BR/Luigifab_Minifier.csv", "app/locale/pt_BR/Luigifab_Minifier.csv"],
+            ["src/app/locale/pt_PT/Luigifab_Minifier.csv", "app/locale/pt_PT/Luigifab_Minifier.csv"],
+            ["src/app/locale/ru_RU/Luigifab_Minifier.csv", "app/locale/ru_RU/Luigifab_Minifier.csv"],
+            ["src/app/locale/tr_TR/Luigifab_Minifier.csv", "app/locale/tr_TR/Luigifab_Minifier.csv"],
+            ["src/app/locale/zh_CN/Luigifab_Minifier.csv", "app/locale/zh_CN/Luigifab_Minifier.csv"],
+            ["src/app/etc/modules/Luigifab_Minifier.xml", "app/etc/modules/Luigifab_Minifier.xml"],
+            ["src/app/code/community/Luigifab/Minifier/", "app/code/community/Luigifab/Minifier/"],
+            ["src/app/design/adminhtml/default/default/layout/luigifab/minifier.xml", "app/design/adminhtml/default/default/layout/luigifab/minifier.xml"],
+            ["src/app/design/adminhtml/default/default/template/luigifab/minifier/", "app/design/adminhtml/default/default/template/luigifab/minifier/"],
+            ["src/app/design/frontend/base/default/layout/luigifab/minifier.xml", "app/design/frontend/base/default/layout/luigifab/minifier.xml"],
+            ["src/app/design/frontend/base/default/template/luigifab/minifier/", "app/design/frontend/base/default/template/luigifab/minifier/"]
+        ]
+    }
+}
