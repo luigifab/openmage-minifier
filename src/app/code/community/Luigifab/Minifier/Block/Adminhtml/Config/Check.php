@@ -1,7 +1,7 @@
 <?php
 /**
  * Created D/25/02/2018
- * Updated V/18/06/2021
+ * Updated J/22/07/2021
  *
  * Copyright 2011-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -43,7 +43,6 @@ class Luigifab_Minifier_Block_Adminhtml_Config_Check extends Mage_Adminhtml_Bloc
 		$js = empty($js) ? 'uglifyjs not found' : str_replace('uglify-js', 'uglify-js (3.0+)', trim(implode($js)));
 
 		$element->setValue(implode('<br />', array_filter([$npm, $css, $js, $this->helper('minifier')->getNumberOfCpuCore().' cpu'])));
-
 		return sprintf('<strong lang="en" id="%s">%s</strong>', $element->getHtmlId(), $element->getValue());
 	}
 }

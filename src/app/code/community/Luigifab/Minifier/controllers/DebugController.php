@@ -1,7 +1,7 @@
 <?php
 /**
  * Created D/15/11/2020
- * Updated D/23/05/2021
+ * Updated J/30/09/2021
  *
  * Copyright 2011-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -19,42 +19,7 @@
 
 class Luigifab_Minifier_DebugController extends Mage_Core_Controller_Front_Action {
 
-	public function indexAction() {
-
-		if (Mage::getStoreConfigFlag('minifier/cssjs/enabled') && Mage::getStoreConfigFlag('minifier/cssjs/debug_enabled')) {
-
-			$passwd = Mage::getStoreConfig('minifier/cssjs/debug_password');
-			if (!empty($passwd) && ($this->getRequest()->getParam('pass') != $passwd)) {
-				$link = '';
-				$text = 'invalid pass';
-			}
-			else {
-				if (empty(Mage::getSingleton('core/cookie')->get('minifier')))
-					$link = ' - <a href="'.Mage::getUrl('*/*/start', ['pass' => $passwd]).'">start</a>';
-				else
-					$link = ' - <a href="'.Mage::getUrl('*/*/stop', ['pass' => $passwd]).'">stop</a>';
-
-				$files = Mage::getSingleton('core/session')->getData('minifier');
-				if (is_array($files))
-					$text = str_replace(Mage::getBaseDir().'/', '', print_r($this->formatData($files), true));
-				else
-					$text = 'no data';
-			}
-		}
-		else {
-			$link = '';
-			$text = 'disabled';
-		}
-
-		$this->getResponse()->setBody(
-			'<html lang="en"><head><title>minifier</title>'.
-			'<meta http-equiv="Content-Type" content="text/html; charset=utf-8">'.
-			'<meta name="robots" content="noindex,nofollow"></head><body><pre style="white-space:pre-wrap;">'.
-			date('c').$link.'<br><br>'.$text.
-			'</pre></body></html>');
-	}
-
-	private function formatData($files) {
+	protected function formatData(array $files) {
 
 		$base = Mage::getBaseUrl('web');
 
@@ -114,7 +79,46 @@ class Luigifab_Minifier_DebugController extends Mage_Core_Controller_Front_Actio
 		return $files;
 	}
 
+	public function indexAction() {
+
+		Mage::register('turpentine_nocache_flag', true, true);
+
+		if (Mage::getStoreConfigFlag(Mage::app()->getStore()->isAdmin() ? 'minifier/cssjs/enabled_back' : 'minifier/cssjs/enabled_front') && Mage::getStoreConfigFlag('minifier/cssjs/debug_enabled')) {
+
+			$passwd = Mage::getStoreConfig('minifier/cssjs/debug_password');
+			if (!empty($passwd) && ($this->getRequest()->getParam('pass') != $passwd)) {
+				$link = '';
+				$text = 'invalid pass';
+			}
+			else {
+				if (empty(Mage::getSingleton('core/cookie')->get('minifier')))
+					$link = ' - <a href="'.Mage::getUrl('*/*/start', ['pass' => $passwd]).'">start</a>';
+				else
+					$link = ' - <a href="'.Mage::getUrl('*/*/stop', ['pass' => $passwd]).'">stop</a>';
+
+				$files = Mage::getSingleton('core/session')->getData('minifier');
+				if (is_array($files))
+					$text = str_replace(Mage::getBaseDir().'/', '', print_r($this->formatData($files), true));
+				else
+					$text = 'no data';
+			}
+		}
+		else {
+			$link = '';
+			$text = 'disabled';
+		}
+
+		$this->getResponse()->setBody(
+			'<html lang="en"><head><title>minifier</title>'.
+			'<meta http-equiv="Content-Type" content="text/html; charset=utf-8">'.
+			'<meta name="robots" content="noindex,nofollow"></head><body><pre style="white-space:pre-wrap;">'.
+			date('c').$link.'<br><br>'.$text.
+			'</pre></body></html>');
+	}
+
 	public function startAction() {
+
+		Mage::register('turpentine_nocache_flag', true, true);
 
 		$passwd = Mage::getStoreConfig('minifier/cssjs/debug_password');
 		if (Mage::getStoreConfigFlag('minifier/cssjs/debug_enabled') && (empty($passwd) || ($this->getRequest()->getParam('pass') == $passwd))) {
@@ -127,6 +131,8 @@ class Luigifab_Minifier_DebugController extends Mage_Core_Controller_Front_Actio
 	}
 
 	public function stopAction() {
+
+		Mage::register('turpentine_nocache_flag', true, true);
 
 		$passwd = Mage::getStoreConfig('minifier/cssjs/debug_password');
 		if (Mage::getStoreConfigFlag('minifier/cssjs/debug_enabled') && (empty($passwd) || ($this->getRequest()->getParam('pass') == $passwd))) {

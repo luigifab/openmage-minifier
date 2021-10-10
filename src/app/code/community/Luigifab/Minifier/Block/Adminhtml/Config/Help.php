@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/20/06/2015
- * Updated L/24/05/2021
+ * Updated J/30/09/2021
  *
  * Copyright 2011-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -32,7 +32,7 @@ class Luigifab_Minifier_Block_Adminhtml_Config_Help extends Mage_Adminhtml_Block
 			'Luigifab/Minifier', $this->helper('minifier')->getVersion(), 'luigifab.fr/openmage/minifier');
 	}
 
-	private function checkRewrites() {
+	protected function checkRewrites() {
 
 		$rewrites = [
 			['block' => 'adminhtml/page'],

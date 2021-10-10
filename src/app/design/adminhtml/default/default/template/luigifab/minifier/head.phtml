@@ -1,7 +1,7 @@
 <?php
 /**
  * Created V/15/04/2016
- * Updated D/15/11/2020
+ * Updated L/13/09/2021
  *
  * Copyright 2011-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -50,7 +50,7 @@ Ext.UpdateManager.defaults.disableCaching = true;
 <?php if ($this->getCanLoadTinyMce()): // TinyMCE is broken when loaded through index.php ?>
 	<script type="text/javascript" src="<?php echo Mage::getDesign()->getJsUrl('tiny_mce/tiny_mce.js') ?>"></script>
 <?php endif ?>
-<?php if (!Mage::getStoreConfigFlag('minifier/cssjs/enabled')): ?>
+<?php if (!Mage::getStoreConfigFlag('minifier/cssjs/enabled_back')): ?>
 	<?php echo $this->helper('core/js')->getTranslatorScript() ?>
 	<?php echo $this->getChildHtml('optional_zip_countries') ?>
 	<?php echo $this->getChildHtml('calendar') ?>

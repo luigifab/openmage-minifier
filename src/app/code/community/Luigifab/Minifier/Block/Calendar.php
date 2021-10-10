@@ -1,7 +1,7 @@
 <?php
 /**
  * Created D/20/05/2018
- * Updated D/15/11/2020
+ * Updated D/18/07/2021
  *
  * Copyright 2011-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -19,7 +19,7 @@
 
 class Luigifab_Minifier_Block_Calendar extends Mage_Core_Block_Html_Calendar {
 
-	public function getHtml($locale) {
+	public function getHtml(string $locale) {
 
 		// get days names
 		$days = Zend_Locale_Data::getList($locale, 'days');

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created L/27/06/2011
- * Updated S/26/06/2021
+ * Updated L/13/09/2021
  *
  * Copyright 2011-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -46,7 +46,6 @@
 					<show_in_default>1</show_in_default>
 					<show_in_website>0</show_in_website>
 					<show_in_store>0</show_in_store>
-					<expanded>1</expanded>
 					<fields>
 						<autolang translate="label">
 							<label>Automatically set the language of the backend</label>
@@ -93,7 +92,6 @@
 					<show_in_default>1</show_in_default>
 					<show_in_website>1</show_in_website>
 					<show_in_store>1</show_in_store>
-					<expanded>1</expanded>
 					<fields>
 						<enabled translate="label comment">
 							<label>Enable</label>
@@ -113,23 +111,32 @@
 					<show_in_default>1</show_in_default>
 					<show_in_website>1</show_in_website>
 					<show_in_store>1</show_in_store>
-					<expanded>1</expanded>
 					<fields>
-						<enabled translate="label comment">
-							<label>Enable</label>
+						<enabled_back translate="label comment">
+							<label>Enable in backend</label>
 							<comment><![CDATA[May cause display problems.]]></comment>
 							<frontend_type>select</frontend_type>
 							<source_model>minifier/source_minify</source_model>
 							<sort_order>1</sort_order>
 							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+						</enabled_back>
+						<enabled_front translate="label comment">
+							<label>Enable in frontend</label>
+							<comment><![CDATA[May cause display problems.]]></comment>
+							<frontend_type>select</frontend_type>
+							<source_model>minifier/source_minify</source_model>
+							<sort_order>2</sort_order>
+							<show_in_default>1</show_in_default>
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
-						</enabled>
+						</enabled_front>
 						<exclude translate="label comment">
 							<label>Exclude list</label>
 							<comment><![CDATA[Based on <em>getFullActionName(/)</em>.]]></comment>
 							<frontend_type>textarea</frontend_type>
-							<sort_order>2</sort_order>
+							<sort_order>3</sort_order>
 							<show_in_default>1</show_in_default>
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
@@ -142,22 +149,31 @@
 					<show_in_default>1</show_in_default>
 					<show_in_website>1</show_in_website>
 					<show_in_store>1</show_in_store>
-					<expanded>1</expanded>
 					<fields>
-						<enabled translate="label comment">
-							<label>Enable</label>
+						<enabled_back translate="label comment">
+							<label>Enable in backend</label>
 							<comment><![CDATA[May cause display problems. Get source files only form <em>layout</em>.]]></comment>
 							<frontend_type>select</frontend_type>
 							<source_model>adminhtml/system_config_source_yesno</source_model>
 							<sort_order>1</sort_order>
 							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+						</enabled_back>
+						<enabled_front translate="label comment">
+							<label>Enable in frontend</label>
+							<comment><![CDATA[May cause display problems. Get source files only form <em>layout</em>.]]></comment>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>2</sort_order>
+							<show_in_default>1</show_in_default>
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
-						</enabled>
+						</enabled_front>
 						<!--exclude translate="label">
 							<label>Exclude list</label>
 							<frontend_type>textarea</frontend_type>
-							<sort_order>2</sort_order>
+							<sort_order>3</sort_order>
 							<show_in_default>1</show_in_default>
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
@@ -165,7 +181,7 @@
 						<cleancss translate="label">
 							<label>Full path to clean-css</label>
 							<comment><![CDATA[<a href="https://github.com/jakubpawlowicz/clean-css-cli">github.com/jakubpawlowicz/clean-css-cli</a>]]></comment>
-							<sort_order>3</sort_order>
+							<sort_order>4</sort_order>
 							<show_in_default>1</show_in_default>
 							<show_in_website>0</show_in_website>
 							<show_in_store>0</show_in_store>
@@ -173,7 +189,7 @@
 						<uglifyjs translate="label">
 							<label>Full path to uglify-js</label>
 							<comment><![CDATA[<a href="https://github.com/mishoo/uglifyjs">github.com/mishoo/uglifyjs</a>]]></comment>
-							<sort_order>4</sort_order>
+							<sort_order>5</sort_order>
 							<show_in_default>1</show_in_default>
 							<show_in_website>0</show_in_website>
 							<show_in_store>0</show_in_store>
@@ -182,7 +198,7 @@
 							<label>Programs version</label>
 							<frontend_type>label</frontend_type>
 							<frontend_model>minifier/adminhtml_config_check</frontend_model>
-							<sort_order>5</sort_order>
+							<sort_order>6</sort_order>
 							<show_in_default>1</show_in_default>
 							<show_in_website>0</show_in_website>
 							<show_in_store>0</show_in_store>

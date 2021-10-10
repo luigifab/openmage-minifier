@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/20/06/2015
- * Updated D/23/05/2021
+ * Updated J/30/09/2021
  *
  * Copyright 2011-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -38,7 +38,7 @@ class Luigifab_Minifier_Helper_Data extends Mage_Core_Helper_Abstract {
 		$current = Mage::app()->getFrontController()->getAction()->getFullActionName('/');
 		$exclude = array_filter(preg_split('#\s+#', Mage::getStoreConfig('minifier/html/exclude')));
 
-		if (extension_loaded('tidy') && !in_array($current, $exclude) && Mage::getStoreConfigFlag('minifier/html/enabled'))
+		if (extension_loaded('tidy') && !in_array($current, $exclude) && Mage::getStoreConfigFlag(Mage::app()->getStore()->isAdmin() ? 'minifier/html/enabled_back' : 'minifier/html/enabled_front'))
 			$html = $this->cleanWithTidy($html);
 
 		if (Mage::getStoreConfigFlag('minifier/gzip/enabled'))
@@ -61,7 +61,7 @@ class Luigifab_Minifier_Helper_Data extends Mage_Core_Helper_Abstract {
 		return $this->_urlkey;
 	}
 
-	private function cleanWithTidy(string $html) {
+	protected function cleanWithTidy(string $html) {
 
 		$html = str_replace('></option>', '>&nbsp;</option>', $html);
 
@@ -70,7 +70,7 @@ class Luigifab_Minifier_Helper_Data extends Mage_Core_Helper_Abstract {
 		$tidy->cleanRepair();
 
 		$html = str_replace(["\"\n   ", '>&nbsp;</option>'], ['"', '></option>'], tidy_get_output($tidy)); // doctype & option
-		return preg_replace([
+		return (string) preg_replace([ // (yes)
 			'#css">\s+/\*<!\[CDATA\[\*/#',
 			'#/\*]]>\*/\s+</style#',
 			'#" />#',
@@ -99,11 +99,11 @@ class Luigifab_Minifier_Helper_Data extends Mage_Core_Helper_Abstract {
 		], $html);
 	}
 
-	private function compressWithGzip(string $html) {
+	protected function compressWithGzip(string $html) {
 
 		if ((ini_get('zlib.output_compression') != '1') && (mb_stripos(getenv('HTTP_ACCEPT_ENCODING'), 'gzip') !== false)) {
 			header('Content-Encoding: gzip');
-			$html = gzencode($html, 9);
+			$html = (string) gzencode($html, 9); // (yes)
 		}
 
 		return $html;

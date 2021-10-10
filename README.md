@@ -6,12 +6,10 @@ For more information, go to https://www.luigifab.fr/openmage/minifier (IPv6 is r
 
 This repository is a releases mirror. To install the module, please use the composer key available in the documentation.
 
-- Current version: 4.0.0 (07/07/2021)
-- Compatibility: OpenMage 19.x / 20.x, PHP 7.2 / 7.3 / 7.4 / 8.0
+- Current version: 4.1.0 (10/10/2021)
+- Compatibility: OpenMage 19.x / 20.x / 21.x, PHP 7.2 / 7.3 / 7.4 / 8.0
 - Client compatibility: Firefox 36+, Chrome 32+, Opera 19+, Edge 16+, Safari 9+
-- Translations: English (en), French (fr-FR/fr-CA), German (de), Italian (it), Portuguese (pt-PT/pt-BR), Spanish (es)
-- Other translations: Czech (cs), Dutch (nl), Japanese (ja), Polish (pl), Slovak (sk)
-- Other translations: Chinese (zh), Russian (ru), Turkish (tr), Ukrainian (uk)
+- Translations: English (en), French (fr-FR/fr-CA), German (de), Italian (it), Portuguese (pt-PT/pt-BR), Spanish (es) / Chinese (zh), Czech (cs), Dutch (nl), Greek (el), Hungarian (hu), Japanese (ja), Polish (pl), Romanian (ro), Russian (ru), Slovak (sk), Turkish (tr), Ukrainian (uk)
 - License: GNU GPL 2+
 
 If you like, take some of your time to improve the translations, go to https://bit.ly/2HyCCEc.

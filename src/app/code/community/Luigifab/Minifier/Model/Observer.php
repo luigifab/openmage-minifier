@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/20/06/2015
- * Updated L/31/05/2021
+ * Updated J/30/09/2021
  *
  * Copyright 2011-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -65,7 +65,7 @@ class Luigifab_Minifier_Model_Observer extends Luigifab_Minifier_Helper_Data {
 		}
 	}
 
-	private function searchCurrentLocale(array $locales, string $result = 'en_US') {
+	protected function searchCurrentLocale(array $locales, string $result = 'en_US') {
 
 		// recherche des préférences dans HTTP_ACCEPT_LANGUAGE
 		// https://stackoverflow.com/a/33748742

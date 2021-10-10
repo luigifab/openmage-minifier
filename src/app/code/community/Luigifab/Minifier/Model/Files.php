@@ -1,7 +1,7 @@
 <?php
 /**
  * Created W/13/04/2016
- * Updated J/01/07/2021
+ * Updated M/28/09/2021
  *
  * Copyright 2011-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -21,7 +21,9 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 
 	public function getMinifiedFiles(int $storeId) {
 
-		if (!Mage::getStoreConfigFlag('minifier/cssjs/enabled', $storeId))
+		if (($storeId == 0) && !Mage::getStoreConfigFlag('minifier/cssjs/enabled_back'))
+			return [];
+		if (($storeId != 0) && !Mage::getStoreConfigFlag('minifier/cssjs/enabled_front', $storeId))
 			return [];
 
 		$dir = Mage::getBaseDir('media').'/minifier-cache/';
@@ -45,10 +47,13 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 		$items = empty($items) ? null : @json_decode($items, true);
 
 		if (empty($items)) {
+
 			$debug = 'load files from layout';
 			$items = $this->searchFiles($storeId);
+
 			if (Mage::app()->useCache('layout'))
-				Mage::app()->saveCache(json_encode($items), 'minifier_layout_'.$storeId, ['LAYOUT_GENERAL_CACHE_TAG'], 604800); // 7 jours
+				Mage::app()->saveCache(json_encode($items), 'minifier_layout_'.$storeId,
+					[Mage_Core_Model_Layout_Update::LAYOUT_GENERAL_CACHE_TAG]);
 		}
 
 		// minifie les fichiers sources (et change la clé)
@@ -73,11 +78,13 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 
 		// debug
 		if (!empty($_COOKIE['minifier']) && Mage::getStoreConfigFlag('minifier/cssjs/debug_enabled')) {
+
 			array_unshift($items, round(microtime(true) - $start, 3).' seconds');
 			array_unshift($items, $debug);
 			array_unshift($items, (empty($value) ? Mage::getStoreConfig('minifier/cssjs/value') : $value));
 			array_unshift($items, gmdate('c'));
 			array_unshift($items, getenv('REQUEST_URI'));
+
 			Mage::getSingleton('core/session')->setData('minifier', $items);
 		}
 
@@ -85,11 +92,12 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 	}
 
 	// utilise uglify-js et clean-css
-	private function minifyFiles(array $items) {
+	protected function minifyFiles(array $items) {
 
-		$core = max(1, Mage::helper('minifier')->getNumberOfCpuCore() - 1);
-		$pids = $files = [];
-		$new  = false;
+		$core  = max(1, Mage::helper('minifier')->getNumberOfCpuCore() - 1);
+		$pids  = [];
+		$files = [];
+		$new   = false;
 
 		// rassemble les fichiers à minifier
 		foreach ($items as $item)
@@ -157,7 +165,7 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 		return $new;
 	}
 
-	private function mergeFiles(string $dest, array $data) {
+	protected function mergeFiles(string $dest, array $data) {
 
 		$dir = Mage::getBaseDir('log');
 		if (!is_dir($dir))
@@ -182,7 +190,7 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 	}
 
 	// prend un soin tout particulier à ignorer les données de oauth
-	private function getFileFromHelper($node) {
+	protected function getFileFromHelper(object $node) {
 
 		$helperName = (string) $node->getAttribute('helper');
 		if ($helperName == 'configurableswatches/getSwatchesProductJs')
@@ -199,10 +207,12 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 		return call_user_func_array([Mage::helper($helperName), $helperMethod], $attributes);
 	}
 
-	private function searchFiles(int $storeId) {
+	protected function searchFiles(int $storeId) {
 
 		//$ignores = array_filter(preg_split('#\s+#', Mage::getStoreConfig('minifier/cssjs/exclude')));
-		$removed = $items = $data = [];
+		$removed = [];
+		$items   = [];
+		$data    = [];
 		$design  = Mage::getDesign();
 
 		// génération des fichiers virtuels
@@ -232,7 +242,7 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 			$data[] = '    if ($(zipElementId) != undefined) {';
 			$data[] = '        setPostcodeOptional($(zipElementId), countryElement.value);';
 			$data[] = '    } else {';
-			$data[] = '        Event.observe(window, "load", function () {';
+			$data[] = '        self.addEventListener("load", function () {';
 			$data[] = '            setPostcodeOptional($(zipElementId), countryElement.value);';
 			$data[] = '        });';
 			$data[] = '    }';
@@ -288,7 +298,7 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 
 		foreach ($xpath->query('//action[@method="removeItem"]') as $element) {
 
-			if (mb_stripos($element->getNodePath(), 'oauth') !== false)
+			if (stripos($element->getNodePath(), 'oauth') !== false)
 				continue;
 
 			$config = $element->getAttribute('ifconfig');
@@ -316,7 +326,7 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 
 		foreach ($xpath->query('//action[@method="addItem"]|//action[@method="addCss"]|//action[@method="addJs"]') as $element) {
 
-			if (mb_stripos($element->getNodePath(), 'oauth') !== false)
+			if (stripos($element->getNodePath(), 'oauth') !== false)
 				continue;
 
 			$config = $element->getAttribute('ifconfig');
@@ -476,11 +486,11 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 	}
 
 	// nom des fichiers
-	private function getFinalName(string $pack, string $media) {
+	protected function getFinalName(string $pack, string $media) {
 		return (string) preg_replace('#[^a-z0-9.]+#', '-', $pack.'-'.$media.((mb_stripos($media, 'script') === false) ? '.min.css' : '.min.js'));
 	}
 
-	private function getRealSource(string $file) {
+	protected function getRealSource(string $file) {
 
 		if (mb_stripos($file, '.min.js') !== false) {
 			$check = str_replace('.min.js', '.js', $file);
@@ -497,7 +507,7 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 		return $file;
 	}
 
-	private function getFileMedia(string $data) {
+	protected function getFileMedia(string $data) {
 
 		if (mb_stripos($data, 'media="') !== false)
 			$media = mb_substr($data, mb_strpos($data, '"') + 1, -1);
@@ -509,7 +519,7 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 		return empty($media) ? 'screen, projection' : $media;
 	}
 
-	private function getMinifiedName(string $file, bool $md5 = true, bool $min = true) {
+	protected function getMinifiedName(string $file, bool $md5 = true, bool $min = true) {
 
 		// /.../example.js     => example.js
 		// /.../example.min.js => example.min.js => example.js

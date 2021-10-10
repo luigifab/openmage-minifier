@@ -41,6 +41,7 @@ Files and directories
 - app/locale/de_AT/Luigifab_Minifier.csv
 - app/locale/de_CH/Luigifab_Minifier.csv
 - app/locale/de_DE/Luigifab_Minifier.csv
+- app/locale/el_GR/Luigifab_Minifier.csv
 - app/locale/es_AR/Luigifab_Minifier.csv
 - app/locale/es_CL/Luigifab_Minifier.csv
 - app/locale/es_CO/Luigifab_Minifier.csv
@@ -53,11 +54,13 @@ Files and directories
 - app/locale/fr_CA/Luigifab_Minifier.csv
 - app/locale/fr_CH/Luigifab_Minifier.csv
 - app/locale/fr_FR/Luigifab_Minifier.csv
+- app/locale/hu_HU/Luigifab_Minifier.csv
 - app/locale/it_CH/Luigifab_Minifier.csv
 - app/locale/it_IT/Luigifab_Minifier.csv
 - app/locale/pl_PL/Luigifab_Minifier.csv
 - app/locale/pt_BR/Luigifab_Minifier.csv
 - app/locale/pt_PT/Luigifab_Minifier.csv
+- app/locale/ro_RO/Luigifab_Minifier.csv
 - app/locale/ru_RU/Luigifab_Minifier.csv
 - app/locale/tr_TR/Luigifab_Minifier.csv
 - app/locale/zh_CN/Luigifab_Minifier.csv
