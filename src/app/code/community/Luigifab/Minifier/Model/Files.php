@@ -1,9 +1,9 @@
 <?php
 /**
  * Created W/13/04/2016
- * Updated M/28/09/2021
+ * Updated D/24/10/2021
  *
- * Copyright 2011-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
  *
  * This program is free software, you can redistribute it or modify
@@ -107,7 +107,7 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 		// nous attendons (au maximum 45 secondes) que ce soit finit pour ne pas commencer à faire la même chose
 		$lock = Mage::getBaseDir('var').'/minifier.lock';
 		while (is_file($lock) && ((filemtime($lock) + 45) > time())) {
-			sleep(0.5);
+			usleep(500000); // 0.5 s
 			clearstatcache(true, $lock);
 		}
 
@@ -142,7 +142,7 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 						else
 							clearstatcache('/proc/'.$pid);
 					}
-					sleep(0.1);
+					usleep(100000); // 0.1 s
 				}
 			}
 		}
@@ -154,7 +154,7 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 				else
 					clearstatcache('/proc/'.$pid);
 			}
-			sleep(0.1);
+			usleep(100000); // 0.1 s
 		}
 
 		// débloque tout le monde
@@ -212,12 +212,16 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 		//$ignores = array_filter(preg_split('#\s+#', Mage::getStoreConfig('minifier/cssjs/exclude')));
 		$removed = [];
 		$items   = [];
-		$data    = [];
+		$data    = ['optionalZipCountries = '.Mage::helper('directory')->getCountriesWithOptionalZip(true).';'];
 		$design  = Mage::getDesign();
 
 		// génération des fichiers virtuels
-		if (!empty($storeId)) {
-
+		if (empty($storeId)) {
+			$name = 'virtual-admin-'.str_replace('_','-', Mage::getSingleton('core/translate')->getLocale()).'.min.js';
+			$area = 'adminhtml';
+			$pack = 'admin';
+		}
+		else {
 			$name = 'virtual-front-'.str_replace('_','-', Mage::getSingleton('core/translate')->getLocale()).'.min.js';
 			$area = 'frontend';
 
@@ -227,38 +231,6 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 				$pack = Mage::getStoreConfig('design/package/name', $storeId).'-'.$cnf;
 			else
 				$pack = Mage::getStoreConfig('design/package/name', $storeId).'-default';
-		}
-		else {
-			$name = 'virtual-admin-'.str_replace('_','-', Mage::getSingleton('core/translate')->getLocale()).'.min.js';
-			$area = 'adminhtml';
-			$pack = 'admin';
-
-			// optional_zip_countries
-			// app/design/adminhtml/default/default/template/directory/js/optional_zip_countries.phtml
-			$data[] = 'optionalZipCountries = '.Mage::helper('directory')->getCountriesWithOptionalZip(true).';';
-			$data[] = 'function onAddressCountryChanged (countryElement) {';
-			$data[] = '    var zipElementId = countryElement.id.replace(/country_id/, "postcode");';
-			$data[] = '    // Ajax-request and normal content load compatibility';
-			$data[] = '    if ($(zipElementId) != undefined) {';
-			$data[] = '        setPostcodeOptional($(zipElementId), countryElement.value);';
-			$data[] = '    } else {';
-			$data[] = '        self.addEventListener("load", function () {';
-			$data[] = '            setPostcodeOptional($(zipElementId), countryElement.value);';
-			$data[] = '        });';
-			$data[] = '    }';
-			$data[] = '}';
-			$data[] = 'function setPostcodeOptional(zipElement, country) {';
-			$data[] = '    if (optionalZipCountries.indexOf(country) != -1) {';
-			$data[] = '        while (zipElement.hasClassName("required-entry")) {';
-			$data[] = '            zipElement.removeClassName("required-entry");';
-			$data[] = '        }';
-			$data[] = '        zipElement.up(1).down("label > span.required").hide();';
-			$data[] = '    } else {';
-			$data[] = '        zipElement.addClassName("required-entry");';
-			$data[] = '        zipElement.up(1).down("label > span.required").show();';
-			$data[] = '    }';
-			$data[] = '}';
-			$data[] = 'varienGlobalEvents.attachEventHandler("address_country_changed", onAddressCountryChanged);';
 		}
 
 		$items[$name] = ['type' => 'minifier', 'name' => $name, 'media' => 'virtual', 'merge' => false, 'css' => false];

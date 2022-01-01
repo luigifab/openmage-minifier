@@ -3,13 +3,13 @@ Tracker   : https://github.com/luigifab/openmage-minifier
 Composer  : https://packagist.org/packages/luigifab/openmage-minifier
 Module    : Luigifab/Minifier (ex Compressor)
 License   : GNU GPL 2+ (https://opensource.org/licenses/gpl-2.0)
-Copyright : 2011-2021 Fabrice Creuzot (luigifab) <code~luigifab~fr>
+Copyright : 2011-2022 Fabrice Creuzot (luigifab) <code~luigifab~fr>
 
 
 
 
 
-IF YOU FOUND A MISTAKE OR A BUG, PLEASE, CONTACT ME (IN FRENCH OR IN ENGLISH) AT code~luigifab~fr
+IF YOU FOUND A MISTAKE OR A BUG, PLEASE CONTACT ME (IN FRENCH OR IN ENGLISH).
 CSS AND JS FILES ARE MINIFIED WITH clean-css (github.com/jakubpawlowicz/clean-css) AND uglify-js (github.com/mishoo/uglifyjs).
 ALL FILES (INCLUDING DOCUMENTATION AND TRANSLATIONS) ARE LICENSED UNDER THE TERMS OF THE GNU GPL 2+ LICENSE.
 
@@ -57,12 +57,14 @@ Files and directories
 - app/locale/hu_HU/Luigifab_Minifier.csv
 - app/locale/it_CH/Luigifab_Minifier.csv
 - app/locale/it_IT/Luigifab_Minifier.csv
+- app/locale/ja_JP/Luigifab_Minifier.csv
 - app/locale/pl_PL/Luigifab_Minifier.csv
 - app/locale/pt_BR/Luigifab_Minifier.csv
 - app/locale/pt_PT/Luigifab_Minifier.csv
 - app/locale/ro_RO/Luigifab_Minifier.csv
 - app/locale/ru_RU/Luigifab_Minifier.csv
 - app/locale/tr_TR/Luigifab_Minifier.csv
+- app/locale/uk_UA/Luigifab_Minifier.csv
 - app/locale/zh_CN/Luigifab_Minifier.csv
 - app/etc/modules/Luigifab_Minifier.xml
 - app/code/community/Luigifab/Minifier/
@@ -74,8 +76,8 @@ Files and directories
 
 
 Translations in en-US (english/United-States) by:
-- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2011-2021
+- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2011-2022
 Translations in fr-FR (français/France) by:
-- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2011-2021
+- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2011-2022
 
 If you like, take some of your time to improve the translations, go to https://bit.ly/2HyCCEc

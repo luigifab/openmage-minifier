@@ -3,7 +3,7 @@
  * Created S/20/06/2015
  * Updated S/31/08/2019
  *
- * Copyright 2011-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
  *
  * This program is free software, you can redistribute it or modify

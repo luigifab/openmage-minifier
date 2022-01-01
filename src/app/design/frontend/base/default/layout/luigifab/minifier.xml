@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created J/26/07/2018
- * Updated D/26/09/2021
+ * Updated D/24/10/2021
  *
- * Copyright 2011-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
  *
  * This program is free software, you can redistribute it or modify
@@ -29,6 +29,7 @@
 			</action>
 		</reference>
 	</default>
+
 	<catalog_product_view>
 		<reference name="product.info.options.wrapper">
 			<action method="unsetChild" ifconfig="minifier/cssjs/enabled_front">
@@ -36,6 +37,7 @@
 			</action>
 		</reference>
 	</catalog_product_view>
+
 	<catalogsearch_advanced_index>
 		<reference name="content">
 			<action method="unsetChild" ifconfig="minifier/cssjs/enabled_front">

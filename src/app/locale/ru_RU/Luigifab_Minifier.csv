@@ -1,3 +1,6 @@
 "Enable in backend","Добавить в backend"
 "Enable in frontend","Добавить в frontend"
 "Programs version","Версия программ"
+"%s kB","%s Кб"
+"%s MB","%s Мб"
+"%s GB","%s ГБ"

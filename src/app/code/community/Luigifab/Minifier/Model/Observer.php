@@ -1,9 +1,9 @@
 <?php
 /**
  * Created S/20/06/2015
- * Updated J/30/09/2021
+ * Updated J/04/11/2021
  *
- * Copyright 2011-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
  *
  * This program is free software, you can redistribute it or modify
@@ -31,6 +31,9 @@ class Luigifab_Minifier_Model_Observer extends Luigifab_Minifier_Helper_Data {
 		];
 
 		exec('rm -rf '.implode(' ', $dirs));
+		exec('rm -f  '.Mage::getBaseDir('media').'/minifier-cache/virtual*');
+
+		$this->updateConfig($observer);
 	}
 
 	// EVENT admin_system_config_changed_section_minifier (adminhtml)
@@ -72,11 +75,10 @@ class Luigifab_Minifier_Model_Observer extends Luigifab_Minifier_Helper_Data {
 		$codes = array_reduce(
 			empty(getenv('HTTP_ACCEPT_LANGUAGE')) ? [] : explode(',', getenv('HTTP_ACCEPT_LANGUAGE')),
 			static function ($items, $item) {
-				[$code, $q] = array_merge(explode(';q=', $item), [1]);
+				[$code, $q] = explode(';q=', $item.';q=1');
 				$items[str_replace('-', '_', $code)] = (float) $q;
 				return $items;
-			},
-			[]);
+			}, []);
 
 		arsort($codes);
 		$codes = array_map('\strval', array_keys($codes));
