@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created D/03/01/2016
- * Updated D/24/10/2021
+ * Updated V/28/01/2022
  *
  * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -65,6 +65,14 @@
 			</action>
 		</reference>
 	</adminhtml_sales_order_create_index>
+
+	<adminhtml_sales_order_address>
+		<reference name="head">
+			<action method="unsetChild" ifconfig="minifier/cssjs/enabled_back">
+				<name>optional_zip_countries</name>
+			</action>
+		</reference>
+	</adminhtml_sales_order_address>
 
 	<adminhtml_customer_edit>
 		<reference name="head">

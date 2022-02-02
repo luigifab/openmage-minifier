@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/20/06/2015
- * Updated J/04/11/2021
+ * Updated J/27/01/2022
  *
  * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -37,8 +37,8 @@ class Luigifab_Minifier_Helper_Data extends Mage_Core_Helper_Abstract {
 		return str_replace($object->date($date)->toString(Zend_Date::TIMEZONE), '', $object->date($date)->toString($format));
 	}
 
-	public function getHumanEmailAddress(string $email) {
-		return $this->escapeEntities(str_replace(['<', '>', ',', '"'], ['(', ')', ', ', ''], $email));
+	public function getHumanEmailAddress($email) {
+		return empty($email) ? '' : $this->escapeEntities(str_replace(['<', '>', ',', '"'], ['(', ')', ', ', ''], $email));
 	}
 
 	public function getHumanDuration($start, $end = null) {
@@ -122,7 +122,7 @@ class Luigifab_Minifier_Helper_Data extends Mage_Core_Helper_Abstract {
 		$current = Mage::app()->getFrontController()->getAction()->getFullActionName('/');
 		$exclude = array_filter(preg_split('#\s+#', Mage::getStoreConfig('minifier/html/exclude')));
 
-		if (extension_loaded('tidy') && !in_array($current, $exclude) && Mage::getStoreConfigFlag(Mage::app()->getStore()->isAdmin() ? 'minifier/html/enabled_back' : 'minifier/html/enabled_front'))
+		if (class_exists('tidy', false) && extension_loaded('tidy') && !in_array($current, $exclude) && Mage::getStoreConfigFlag(Mage::app()->getStore()->isAdmin() ? 'minifier/html/enabled_back' : 'minifier/html/enabled_front'))
 			$html = $this->cleanWithTidy($html);
 
 		if (Mage::getStoreConfigFlag('minifier/gzip/enabled'))

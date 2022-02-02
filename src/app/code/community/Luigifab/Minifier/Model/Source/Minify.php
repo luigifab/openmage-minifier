@@ -1,7 +1,7 @@
 <?php
 /**
  * Created M/24/03/2015
- * Updated S/14/11/2020
+ * Updated J/27/01/2022
  *
  * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -24,7 +24,7 @@ class Luigifab_Minifier_Model_Source_Minify {
 		if (empty($this->_options)) {
 
 			$help = Mage::helper('minifier');
-			$tidy = (extension_loaded('tidy') && class_exists('tidy', false)) ?
+			$tidy = (class_exists('tidy', false) && extension_loaded('tidy')) ?
 				date('Ymd', strtotime(tidy_get_release())) : $help->__('not available');
 
 			$this->_options = [
