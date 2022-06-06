@@ -1,9 +1,10 @@
 <?php
 /**
  * Created J/12/11/2020
- * Updated S/14/11/2020
+ * Updated V/20/05/2022
  *
  * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2022      | Fabrice Creuzot <fabrice~cellublue~com>
  * https://www.luigifab.fr/openmage/minifier
  *
  * This program is free software, you can redistribute it or modify
@@ -19,26 +20,81 @@
 
 class Luigifab_Minifier_Model_Rewrite_Package extends Mage_Core_Model_Design_Package {
 
-	public function getSkinBaseUrl(array $params = []) {
+	public function __construct() {
 
-		$params['_type'] = 'skin';
-		$this->updateParamDefaults($params);
+		parent::__construct();
 
-		return Mage::getBaseUrl('skin', isset($params['_secure']) ? (bool) $params['_secure'] : null).
-			$params['_area'].'/'.
-			$params['_package'].Mage::helper('minifier')->getKeyForUrls().'/'.
-			$params['_theme'].'/';
+		$this->_hasKey = false;
+		if (Mage::getStoreConfig('minifier/cssjs/solution') == 2) {
+			// by file
+			$this->_hasKey = true;
+		}
+		else if (Mage::getStoreConfig('minifier/cssjs/solution') == 1) {
+			// global
+			$this->_hasKey = '-'.Mage::getStoreConfig('minifier/cssjs/value');
+			if (Mage::getIsDeveloperMode())
+				$this->_hasKey = '-00'.date('YmdHis');
+		}
+	}
+
+	public function getFinalUrl($fileName, $url) {
+
+		// no key
+		if (empty($this->_hasKey))
+			return str_replace('-zzyyxx', '', $url);
+
+		// global key
+		if ($this->_hasKey !== true)
+			return str_replace('-zzyyxx', $this->_hasKey, $url);
+
+		// by file
+		if (empty($fileName))
+			return str_replace('-zzyyxx', '', $url);
+
+		$key = (is_file($fileName) ? date('-YmdHis', filemtime($fileName)) : '-00000000000000');
+		return str_replace([basename($url), '-zzyyxx'], [preg_replace('#\.#', $key . '.', basename($url), 1), ''], $url);
 	}
 
 	public function getSkinUrl($file = null, array $params = []) {
 
-		if (($file == 'favicon.ico') && Mage::getStoreConfigFlag('minifier/general/favicon'))
-			return Mage::getBaseUrl('web').'favicon.ico';
+		if (($file == 'favicon.ico') && !empty($conf = Mage::getStoreConfig('minifier/general/favicon'))) {
+			// 1 frontend, 2 frontend + backend
+			if (($conf == 2) || (!Mage::app()->getStore()->isAdmin() && ($conf == 1)))
+				return Mage::getBaseUrl('web').'favicon.ico';
+		}
 
-		return parent::getSkinUrl($file, $params);
+		// prevent reading files outside of the proper directory while still allowing symlinked files
+		Varien_Profiler::start(__METHOD__);
+		if (strpos($file, '..') !== false) {
+			Mage::log(sprintf('Invalid path requested: %s (params: %s)', $file, json_encode($params)), Zend_Log::ERR);
+			throw new RuntimeException('Invalid path requested.');
+		}
+
+		if (empty($params['_type']))
+			$params['_type'] = 'skin';
+		if (empty($params['_default']))
+			$params['_default'] = false;
+
+		$this->updateParamDefaults($params);
+		if (!empty($file)) {
+			$fileName = $this->_fallback(
+				$file,
+				$params,
+				$this->_fallback->getFallbackScheme($params['_area'], $params['_package'], $params['_theme'])
+			);
+			$params['_package'] .= '-zzyyxx';
+			$result = $this->getFinalUrl($fileName, $this->getSkinBaseUrl($params).$file);
+		}
+		else {
+			$params['_package'] .= '-zzyyxx';
+			$result = $this->getFinalUrl(null, $this->getSkinBaseUrl($params));
+		}
+
+		Varien_Profiler::stop(__METHOD__);
+		return $result;
 	}
 
 	public function getJsUrl($file = null) {
-		return trim(Mage::getBaseUrl('js'), '/').Mage::helper('minifier')->getKeyForUrls().'/'.$file;
+		return $this->getFinalUrl(Mage::getBaseDir().'/js/'.$file, trim(Mage::getBaseUrl('js'), '/').'-zzyyxx/'.$file);
 	}
 }

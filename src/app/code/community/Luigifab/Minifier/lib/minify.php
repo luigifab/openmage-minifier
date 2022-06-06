@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/14/07/2018
- * Updated S/26/06/2021
+ * Updated S/19/02/2022
  *
  * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -50,7 +50,7 @@ if (!empty($action) && !empty($source) && !empty($dest)) {
 			$program = Mage::getStoreConfig('minifier/cssjs/cleancss');
 			if ((!empty($program) && is_executable($program)) || is_executable($program = '/usr/bin/cleancss')) {
 				system(sprintf(
-					'%s --source-map --source-map-inline-sources -O1 "specialComments:off" --output %s %s',
+					'%s --with-rebase --source-map --source-map-inline-sources -O1 "specialComments:off" --output %s %s',
 					$program,
 					escapeshellarg($dest),
 					implode(' ', array_map('escapeshellarg', explode(',', $source)))
@@ -112,7 +112,7 @@ if (!empty($action) && !empty($source) && !empty($dest)) {
 	}
 	catch (Throwable $t) {
 		Mage::logException($t);
-		echo $t->getMessage();
+		echo trim($t->getMessage()),"\n";
 	}
 }
 

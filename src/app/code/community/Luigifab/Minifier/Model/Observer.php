@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/20/06/2015
- * Updated J/04/11/2021
+ * Updated S/19/02/2022
  *
  * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -37,7 +37,7 @@ class Luigifab_Minifier_Model_Observer extends Luigifab_Minifier_Helper_Data {
 	}
 
 	// EVENT admin_system_config_changed_section_minifier (adminhtml)
-	public function updateConfig(Varien_Event_Observer $observer) {
+	public function clearCache(Varien_Event_Observer $observer) {
 
 		Mage::app()->cleanCache();
 		Mage::dispatchEvent('adminhtml_cache_flush_system');
@@ -46,7 +46,7 @@ class Luigifab_Minifier_Model_Observer extends Luigifab_Minifier_Helper_Data {
 	}
 
 	// EVENT controller_action_predispatch_adminhtml_index_changeLocale (adminhtml)
-	public function changeBackgendLanguage(Varien_Event_Observer $observer) {
+	public function updateBackgendLanguage(Varien_Event_Observer $observer) {
 
 		$locale = $observer->getData('controller_action')->getRequest()->getParam('locale');
 		Mage::getSingleton('core/session')->setData('locale', $locale);

@@ -4,7 +4,7 @@ Composer  : https://packagist.org/packages/luigifab/openmage-minifier
 Module    : Luigifab/Minifier (ex Compressor)
 License   : GNU GPL 2+ (https://opensource.org/licenses/gpl-2.0)
 Copyright : 2011-2022 Fabrice Creuzot (luigifab) <code~luigifab~fr>
-
+Copyright : 2022      Fabrice Creuzot <fabrice~cellublue~com>
 
 
 
@@ -25,12 +25,13 @@ Rewrite
 - global    | block    | adminhtml/page_head  | minifier/adminhtml_rewrite_head
 - global    | block    | page/html            | minifier/rewrite_html
 - global    | block    | page/html_head       | minifier/rewrite_head
+- global    | helper   | core/js              | minifier/rewrite_js
 - global    | model    | core/design_package  | minifier/rewrite_package
 - global    | model    | core/translate       | minifier/rewrite_translate
 Event
-- adminhtml | admin_system_config_changed_section_minifier               | minifier/observer::updateConfig
+- adminhtml | admin_system_config_changed_section_minifier               | minifier/observer::clearCache
 - adminhtml | clean_media_cache_after                                    | minifier/observer::clearMinifiedFiles
-- adminhtml | controller_action_predispatch_adminhtml_index_changeLocale | minifier/observer::changeBackgendLanguage
+- adminhtml | controller_action_predispatch_adminhtml_index_changeLocale | minifier/observer::updateBackgendLanguage
 - adminhtml | core_locale_set_locale                                     | minifier/observer::setBackendLanguage
 Cron
 - none

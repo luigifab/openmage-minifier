@@ -1,7 +1,7 @@
 <?php
 /**
- * Created L/16/07/2018
- * Updated L/16/07/2018
+ * Created L/14/02/2022
+ * Updated V/20/05/2022
  *
  * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -17,10 +17,19 @@
  * GNU General Public License (GPL) for more details.
  */
 
-class Luigifab_Minifier_Helper_Js extends Mage_Core_Helper_Js {
+class Luigifab_Minifier_Model_Source_Cache {
 
-	public function getTranslatorScript() {
-		$this->_translateData = null;
-		return 'var Translator = new Translate('.$this->getTranslateJson().');';
+	public function toOptionArray() {
+
+		if (empty($this->_options)) {
+			$help = Mage::helper('minifier');
+			$this->_options = [
+				['value' => 0, 'label' => Mage::helper('adminhtml')->__('No')],
+				['value' => 1, 'label' => $help->__('Yes - global (bellow)')],
+				['value' => 2, 'label' => $help->__('Yes - by file (filemtime)')],
+			];
+		}
+
+		return $this->_options;
 	}
 }

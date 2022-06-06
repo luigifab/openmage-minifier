@@ -1,7 +1,7 @@
 <?php
 /**
- * Created M/24/03/2015
- * Updated S/19/02/2022
+ * Created L/16/07/2018
+ * Updated V/11/02/2022
  *
  * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -17,22 +17,17 @@
  * GNU General Public License (GPL) for more details.
  */
 
-class Luigifab_Minifier_Model_Source_Minify {
+class Luigifab_Minifier_Helper_Rewrite_Js extends Mage_Core_Helper_Js {
 
-	public function toOptionArray() {
+	public function getJsUrl($file) {
+		return Mage::getDesign()->getJsUrl($file);
+	}
 
-		if (empty($this->_options)) {
+	public function getJsSkinUrl($file) {
+		return Mage::getDesign()->getSkinUrl($file);
+	}
 
-			$help = Mage::helper('minifier');
-			$tidy = (class_exists('tidy', false) && extension_loaded('tidy')) ?
-				date('Ymd', strtotime(tidy_get_release())) : $help->__('not available');
-
-			$this->_options = [
-				['value' => 0, 'label' => Mage::helper('adminhtml')->__('No')],
-				['value' => 1, 'label' => $help->__('Yes with PHP-TIDY (%s)', $tidy)],
-			];
-		}
-
-		return $this->_options;
+	public function getTranslatorScriptContent() {
+		return 'var Translator = new Translate('.$this->getTranslateJson().');';
 	}
 }

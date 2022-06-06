@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created L/27/06/2011
- * Updated V/28/01/2022
+ * Updated S/19/02/2022
  *
  * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -20,7 +20,7 @@
 <config>
 	<modules>
 		<Luigifab_Minifier>
-			<version>4.2.1</version>
+			<version>4.3.0</version>
 		</Luigifab_Minifier>
 	</modules>
 	<global>
@@ -45,6 +45,11 @@
 			<minifier>
 				<class>Luigifab_Minifier_Helper</class>
 			</minifier>
+			<core>
+				<rewrite>
+					<js>Luigifab_Minifier_Helper_Rewrite_Js</js>
+				</rewrite>
+			</core>
 		</helpers>
 		<models>
 			<minifier>
@@ -83,7 +88,7 @@
 				<observers>
 					<minifier>
 						<class>minifier/observer</class>
-						<method>updateConfig</method>
+						<method>clearCache</method>
 					</minifier>
 				</observers>
 			</admin_system_config_changed_section_minifier>
@@ -91,7 +96,7 @@
 				<observers>
 					<minifier>
 						<class>minifier/observer</class>
-						<method>changeBackgendLanguage</method>
+						<method>updateBackgendLanguage</method>
 					</minifier>
 				</observers>
 			</controller_action_predispatch_adminhtml_index_changeLocale>

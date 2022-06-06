@@ -1,7 +1,7 @@
 <?php
 /**
  * Created J/26/07/2018
- * Updated L/13/09/2021
+ * Updated S/19/02/2022
  *
  * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -35,7 +35,9 @@ $help = $this->helper('minifier');
 <?php endif ?>
 
 <link rel="icon" type="image/x-icon" href="<?php echo $this->getSkinUrl('favicon.ico') ?>" />
+<?php echo $this->getChildHtml('before_cssjs') ?>
 <?php echo $this->getCssJsHtml() ?>
+<?php echo $this->getChildHtml('after_cssjs') ?>
 <?php echo $this->getChildHtml() ?>
 
 <?php if (!Mage::getStoreConfigFlag('minifier/cssjs/enabled_front')): ?>

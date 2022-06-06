@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/03/03/2018
- * Updated L/13/09/2021
+ * Updated L/14/02/2022
  *
  * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -21,26 +21,38 @@ class Luigifab_Minifier_Block_Adminhtml_Config_Server extends Mage_Adminhtml_Blo
 
 	public function render(Varien_Data_Form_Element_Abstract $element) {
 
-		return str_replace("\n", '<br />', '<tr><td colspan="4"><code style="display:block; margin:1em 0; padding-left:6px; font-size:0.9em; line-height:1.4em; border-left:3px solid #AAA;"><strong>## THE REQUIRED CONFIGURATION</strong>
-# for apache (virtual host or htaccess)
+		return str_replace(['`', "\n"], [chr(194).chr(160), '<br />'], '<tr><td colspan="4"><code style="display:block; margin:1em 0; padding-left:6px; font-size:0.9em; line-height:1.4em; border-left:3px solid #AAA;"><strong>## THE REQUIRED CONFIGURATION</strong>
+
+## for apache (virtual host or htaccess)
+RewriteRule (.*)skin/.*/favicon.ico           $1favicon.ico [L]
+# global
 RewriteRule (.*)media/minifier-\d+/(.*)       $1media/minifier/$2 [L]
 RewriteRule (.*)skin/adminhtml/(\w+)-\d+/(.*) $1skin/adminhtml/$2/$3 [L]
 RewriteRule (.*)skin/frontend/(\w+)-\d+/(.*)  $1skin/frontend/$2/$3 [L]
-RewriteRule (.*)skin/.*/favicon.ico           $1favicon.ico [L]
 RewriteRule (.*)js-\d+/(.*)                   $1js/$2 [L]
-# for lighttpd
+# by file
+RewriteRule (.*)-\d{10,}\.(.*)                $1.$2 [L]
+
+## for lighttpd
 url.rewrite-once = (
-	"(.*)/media/minifier-\d+/(.*)"       => "$1/media/minifier/$2",
-	"(.*)/skin/adminhtml/(\w+)-\d+/(.*)" => "$1/skin/adminhtml/$2/$3",
-	"(.*)/skin/frontend/(\w+)-\d+/(.*)"  => "$1/skin/frontend/$2/$3",
-	"(.*)/skin/.*/favicon.ico"           => "$1/favicon.ico",
-	"(.*)/js-\d+/(.*)"                   => "$1/js/$2"
+````"(.*)/skin/.*/favicon.ico"           => "$1/favicon.ico",
+````# global
+````"(.*)/media/minifier-\d+/(.*)"       => "$1/media/minifier/$2",
+````"(.*)/skin/adminhtml/(\w+)-\d+/(.*)" => "$1/skin/adminhtml/$2/$3",
+````"(.*)/skin/frontend/(\w+)-\d+/(.*)"  => "$1/skin/frontend/$2/$3",
+````"(.*)/js-\d+/(.*)"                   => "$1/js/$2",
+````# by file
+````"(.*)-\d{10,}\.(.*)"                 => "$1.$2"
 )
-# for nginx
+
+## for nginx
+rewrite "(.*)/skin/.*/favicon.ico"           $1/favicon.ico          last;
+# global
 rewrite "(.*)/media/minifier-\d+/(.*)"       $1/media/minifier/$2    last;
 rewrite "(.*)/skin/adminhtml/(\w+)-\d+/(.*)" $1/skin/adminhtml/$2/$3 last;
 rewrite "(.*)/skin/frontend/(\w+)-\d+/(.*)"  $1/skin/frontend/$2/$3  last;
-rewrite "(.*)/skin/.*/favicon.ico"           $1/favicon.ico          last;
-rewrite "(.*)/js-\d+/(.*)"                   $1/js/$2                last;</code></td></tr>');
+rewrite "(.*)/js-\d+/(.*)"                   $1/js/$2                last;
+# by file
+rewrite "(.*)-\d{10,}\.(.*)"                 $1.$2                last;</code></td></tr>');
 	}
 }

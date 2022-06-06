@@ -1,9 +1,10 @@
 <?php
 /**
  * Created W/13/04/2016
- * Updated D/24/10/2021
+ * Updated V/13/05/2022
  *
  * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2022      | Fabrice Creuzot <fabrice~cellublue~com>
  * https://www.luigifab.fr/openmage/minifier
  *
  * This program is free software, you can redistribute it or modify
@@ -38,8 +39,9 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 		if (!is_dir($dir) || !is_writable($dir))
 			Mage::throwException('Directory media/minifier does not exist or is not writable.');
 
-		$start = microtime(true);
-		$debug = 'load files from cache';
+		$start  = microtime(true);
+		$debug  = 'load files from cache';
+		$design = Mage::getDesign();
 
 		// cherche les fichiers sources
 		// depuis le cache ou depuis le layout
@@ -49,7 +51,7 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 		if (empty($items)) {
 
 			$debug = 'load files from layout';
-			$items = $this->searchFiles($storeId);
+			$items = $this->searchFiles($design, $storeId);
 
 			if (Mage::app()->useCache('layout'))
 				Mage::app()->saveCache(json_encode($items), 'minifier_layout_'.$storeId,
@@ -58,33 +60,33 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 
 		// minifie les fichiers sources (et change la clé)
 		$hasChange = $this->minifyFiles($items);
-		if ($hasChange) {
+		if ($hasChange && (Mage::getStoreConfig('minifier/cssjs/solution') == 1)) {
 			$value = Mage::getSingleton('core/date')->date('YmdHis');
 			Mage::getModel('core/config')->saveConfig('minifier/cssjs/value', $value);
 			Mage::getConfig()->reinit(); // très important
 		}
 
 		// génère le html
-		$baseurl = Mage::getBaseUrl('media').'minifier'.Mage::helper('minifier')->getKeyForUrls().'/';
 		foreach ($items as $file => $data) {
 
-			if ($data['merge'] && ($hasChange || !is_file($dir.$file)))
-				$this->mergeFiles($dir.$file, $data);
+			$fileName = $dir.$file;
+			if ($data['merge'] && ($hasChange || !is_file($fileName)))
+				$this->mergeFiles($fileName, $data);
+
+			$url = Mage::getBaseUrl('media').'minifier-zzyyxx/'.$file;
+			$url = $design->getFinalUrl($fileName, $url);
 
 			$items[$file]['html'] = $data['css'] ?
-				sprintf('<link rel="stylesheet" media="%s" type="text/css" href="%s" />', $data['media'], $baseurl.$file) :
-				sprintf('<script type="text/javascript" src="%s"></script>', $baseurl.$file);
+				sprintf('<link rel="stylesheet" media="%s" type="text/css" href="%s" />', $data['media'], $url) :
+				sprintf('<script type="text/javascript" src="%s"></script>', $url);
 		}
 
 		// debug
 		if (!empty($_COOKIE['minifier']) && Mage::getStoreConfigFlag('minifier/cssjs/debug_enabled')) {
-
 			array_unshift($items, round(microtime(true) - $start, 3).' seconds');
 			array_unshift($items, $debug);
-			array_unshift($items, (empty($value) ? Mage::getStoreConfig('minifier/cssjs/value') : $value));
 			array_unshift($items, gmdate('c'));
 			array_unshift($items, getenv('REQUEST_URI'));
-
 			Mage::getSingleton('core/session')->setData('minifier', $items);
 		}
 
@@ -94,10 +96,14 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 	// utilise uglify-js et clean-css
 	protected function minifyFiles(array $items) {
 
-		$core  = max(1, Mage::helper('minifier')->getNumberOfCpuCore() - 1);
+		$core  = max(1, Mage::helper('minifier')->getNumberOfCpuCore() - 2);
 		$pids  = [];
 		$files = [];
 		$new   = false;
+
+		$dir = Mage::getBaseDir('log');
+		if (!is_dir($dir))
+			@mkdir($dir, 0755);
 
 		// rassemble les fichiers à minifier
 		foreach ($items as $item)
@@ -121,16 +127,17 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 				if (!is_file($lock))
 					file_put_contents($lock, getenv('REMOTE_ADDR'), LOCK_EX);
 
-				$outdated = preg_replace('#\.[a-z0-9]+\.min\.#', '*.min.', $cache);
+				$outdated = preg_replace('#\.[a-z\d]+\.min\.#', '*.min.', $cache);
 				array_map('unlink', glob($outdated));
 
 				$new = true;
-				$cmd = sprintf('php %s %s %s %s %d >/dev/null 2>&1 & echo $!',
+				$cmd = sprintf('php %s %s %s %s %d >> %s 2>&1 & echo $!',
 					str_replace('Minifier/etc', 'Minifier/lib/minify.php', Mage::getModuleDir('etc', 'Luigifab_Minifier')),
 					(mb_stripos($source, '.css') === false) ? 'js' : 'css',
 					escapeshellarg($source),
 					escapeshellarg($cache),
-					Mage::getIsDeveloperMode() ? 1 : 0);
+					Mage::getIsDeveloperMode() ? 1 : 0,
+					$dir.'/minifier.log');
 
 				Mage::log($cmd, Zend_Log::DEBUG, 'minifier.log');
 				$pids[] = exec($cmd);
@@ -207,13 +214,12 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 		return call_user_func_array([Mage::helper($helperName), $helperMethod], $attributes);
 	}
 
-	protected function searchFiles(int $storeId) {
+	protected function searchFiles(object $design, int $storeId) {
 
 		//$ignores = array_filter(preg_split('#\s+#', Mage::getStoreConfig('minifier/cssjs/exclude')));
 		$removed = [];
 		$items   = [];
 		$data    = ['optionalZipCountries = '.Mage::helper('directory')->getCountriesWithOptionalZip(true).';'];
-		$design  = Mage::getDesign();
 
 		// génération des fichiers virtuels
 		if (empty($storeId)) {
@@ -251,7 +257,7 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 				$data1 = Mage::getBlockSingleton('minifier/calendar')->setTemplate('page/js/calendar.phtml')->getHtml($locale);
 				$data1 = str_replace(['<script type="text/javascript">', '<script>', '//<![CDATA[', '//]]>', '</script>'], '', $data1);
 				$data1 = 'if (self.Calendar) { '.$data1.' }';
-				$data2 = Mage::helper('minifier/js')->getTranslatorScript();
+				$data2 = Mage::helper('core/js')->getTranslatorScriptContent();
 
 				file_put_contents($source, trim(implode("\n", $data)."\n".trim($data2)."\n".trim($data1)), LOCK_EX);
 			}
@@ -459,7 +465,7 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 
 	// nom des fichiers
 	protected function getFinalName(string $pack, string $media) {
-		return (string) preg_replace('#[^a-z0-9.]+#', '-', $pack.'-'.$media.((mb_stripos($media, 'script') === false) ? '.min.css' : '.min.js'));
+		return (string) preg_replace('#[^a-z\d.]+#', '-', $pack.'-'.$media.((mb_stripos($media, 'script') === false) ? '.min.css' : '.min.js'));
 	}
 
 	protected function getRealSource(string $file) {

@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/14/04/2018
- * Updated J/20/05/2021
+ * Updated V/27/03/2022
  *
  * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -26,12 +26,16 @@ if (in_array($session, ['db', 'redis']) && $this->helper('core')->isModuleEnable
 	$session = 'redis';
 
 $cache = (string) Mage::getConfig()->getNode('global/cache/backend');
-$cache = (mb_stripos($cache, 'redis') !== false) ? 'redis' : (empty($cache) ? 'files' : $cache);
+$cache = (stripos($cache, 'redis') !== false) ? 'redis' : (empty($cache) ? 'files' : $cache);
 ?>
 
 <div class="header-top minifier" style="height:55px; color:white; border:0;">
 	<a href="<?php echo $this->getHomeLink() ?>">
-		<img src="<?php echo $this->getSkinUrl('images/logo.png') ?>" alt="" class="logo" style="height:43px;" />
+		<?php if (is_file(Mage::getBaseDir('skin').'/adminhtml/default/default/images/logo.svg')): ?>
+			<img src="<?php echo $this->getSkinUrl('images/logo.svg') ?>" alt="OpenMage" class="logo" style="margin:10px 32px; height:35px;" />
+		<?php else: ?>
+			<img src="<?php echo $this->getSkinUrl('images/logo.png') ?>" alt="OpenMage" class="logo" style="height:43px;" />
+		<?php endif ?>
 	</a>
 	<div class="header-right">
 		<p style="margin:0; font-size:11px; line-height:150%;">
@@ -45,7 +49,7 @@ $cache = (mb_stripos($cache, 'redis') !== false) ? 'redis' : (empty($cache) ? 'f
 			// <a href="<?php echo $this->getLogoutLink() ?>" class="logout"><?php echo $this->__('Log Out') ?></a>
 			<br />
 			<?php if (Mage::getIsDeveloperMode()): ?>
-				<strong>dev:on</strong> <?php echo trim($this->helper('minifier')->getKeyForUrls(), '-') ?> //
+				<strong>dev:on</strong> //
 			<?php endif ?>
 			<?php echo implode(' ', array_map(static function ($value) { return number_format($value, 2); }, sys_getloadavg())) ?> //
 			OpenMage <?php echo Mage::getOpenMageVersion() ?> //

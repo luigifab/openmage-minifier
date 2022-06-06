@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/20/06/2015
- * Updated J/27/01/2022
+ * Updated S/19/02/2022
  *
  * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -117,6 +117,16 @@ class Luigifab_Minifier_Helper_Data extends Mage_Core_Helper_Abstract {
 	}
 
 
+	public function getNumberOfCpuCore() {
+
+		if (empty($this->cpucore)) {
+			exec('nproc', $data);
+			$this->cpucore = max(1, (int) trim(implode($data)));
+		}
+
+		return $this->cpucore;
+	}
+
 	public function afterToHtml(string $html) {
 
 		$current = Mage::app()->getFrontController()->getAction()->getFullActionName('/');
@@ -129,30 +139,6 @@ class Luigifab_Minifier_Helper_Data extends Mage_Core_Helper_Abstract {
 			$html = $this->compressWithGzip($html);
 
 		return trim($html);
-	}
-
-	public function getKeyForUrls() {
-
-		if (!isset($this->_urlkey)) {
-			$this->_urlkey = '';
-			if (Mage::getStoreConfigFlag('minifier/cssjs/solution')) {
-				$this->_urlkey = '-'.preg_replace('#\D#', '', Mage::getStoreConfig('minifier/cssjs/value'));
-				if (Mage::getIsDeveloperMode())
-					$this->_urlkey = '-00'.date('YmdHis');
-			}
-		}
-
-		return $this->_urlkey;
-	}
-
-	public function getNumberOfCpuCore() {
-
-		if (empty($this->cpucore)) {
-			exec('nproc', $data);
-			$this->cpucore = max(1, (int) trim(implode($data)));
-		}
-
-		return $this->cpucore;
 	}
 
 
