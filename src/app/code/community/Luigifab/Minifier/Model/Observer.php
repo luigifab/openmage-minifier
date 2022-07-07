@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/20/06/2015
- * Updated S/19/02/2022
+ * Updated V/24/06/2022
  *
  * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -86,7 +86,7 @@ class Luigifab_Minifier_Model_Observer extends Luigifab_Minifier_Helper_Data {
 		// ajoute la locale présente dans l'url en premier car elle est prioritaire
 		if (!empty($_GET['lang'])) {
 			$code = str_replace('-', '_', $_GET['lang']);
-			if (strpos($code, '_') !== false)
+			if (str_contains($code, '_'))
 				array_unshift($codes, substr($code, 0, strpos($code, '_')));
 			array_unshift($codes, $code);
 		}
@@ -95,7 +95,7 @@ class Luigifab_Minifier_Model_Observer extends Luigifab_Minifier_Helper_Data {
 		// essaye es ou fil puis es_ES ou fil_PH
 		foreach ($codes as $code) {
 
-			if ((strlen($code) >= 2) && (strpos($code, '_') === false)) {
+			if ((strlen($code) >= 2) && !str_contains($code, '_')) {
 				// es devient es_ES de manière à prioriser es_ES au lieu d'utiliser es_XX
 				if (in_array($code.'_'.strtoupper($code), $locales)) {
 					$result = $code.'_'.strtoupper($code);

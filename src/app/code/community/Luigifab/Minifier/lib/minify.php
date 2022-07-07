@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/14/07/2018
- * Updated S/19/02/2022
+ * Updated V/01/07/2022
  *
  * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -49,7 +49,7 @@ if (!empty($action) && !empty($source) && !empty($dest)) {
 			// https://github.com/jakubpawlowicz/clean-css-cli
 			$program = Mage::getStoreConfig('minifier/cssjs/cleancss');
 			if ((!empty($program) && is_executable($program)) || is_executable($program = '/usr/bin/cleancss')) {
-				system(sprintf(
+				exec(sprintf(
 					'%s --with-rebase --source-map --source-map-inline-sources -O1 "specialComments:off" --output %s %s',
 					$program,
 					escapeshellarg($dest),
@@ -64,7 +64,7 @@ if (!empty($action) && !empty($source) && !empty($dest)) {
 			// https://github.com/mishoo/uglifyjs
 			$program = Mage::getStoreConfig('minifier/cssjs/uglifyjs');
 			if ((!empty($program) && is_executable($program)) || is_executable($program = '/usr/bin/uglifyjs')) {
-				system(sprintf(
+				exec(sprintf(
 					'%s --source-map "content=inline,includeSources,base=\'.\',url=\'%s\'" --output %s %s',
 					$program,
 					basename($dest).'.map',
@@ -80,7 +80,7 @@ if (!empty($action) && !empty($source) && !empty($dest)) {
 			// https://github.com/jakubpawlowicz/clean-css-cli
 			$program = Mage::getStoreConfig('minifier/cssjs/cleancss');
 			if ((!empty($program) && is_executable($program)) || is_executable($program = '/usr/bin/cleancss')) {
-				system(sprintf(
+				exec(sprintf(
 					'%s --with-rebase --source-map --source-map-inline-sources -O1 specialComments:off --output %s %s',
 					$program,
 					escapeshellarg($dest),
@@ -95,7 +95,7 @@ if (!empty($action) && !empty($source) && !empty($dest)) {
 			// https://github.com/mishoo/uglifyjs
 			$program = Mage::getStoreConfig('minifier/cssjs/uglifyjs');
 			if ((!empty($program) && is_executable($program)) || is_executable($program = '/usr/bin/uglifyjs')) {
-				system(sprintf(
+				exec(sprintf(
 					'%s --source-map "content=inline,includeSources,base=\'.\',url=\'%s\'" %s --output %s %s',
 					$program,
 					'inline', //basename($dest).'.map',

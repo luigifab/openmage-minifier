@@ -1,7 +1,7 @@
 <?php
 /**
  * Created W/13/04/2016
- * Updated V/13/05/2022
+ * Updated D/26/06/2022
  *
  * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2022      | Fabrice Creuzot <fabrice~cellublue~com>
@@ -144,10 +144,10 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 
 				while (count($pids) >= $core) {
 					foreach ($pids as $key => $pid) {
-						if (!file_exists('/proc/'.$pid))
-							unset($pids[$key]);
-						else
+						if (file_exists('/proc/'.$pid))
 							clearstatcache('/proc/'.$pid);
+						else
+							unset($pids[$key]);
 					}
 					usleep(100000); // 0.1 s
 				}
@@ -156,10 +156,10 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 
 		while (!empty($pids)) {
 			foreach ($pids as $key => $pid) {
-				if (!file_exists('/proc/'.$pid))
-					unset($pids[$key]);
-				else
+				if (file_exists('/proc/'.$pid))
 					clearstatcache('/proc/'.$pid);
+				else
+					unset($pids[$key]);
 			}
 			usleep(100000); // 0.1 s
 		}

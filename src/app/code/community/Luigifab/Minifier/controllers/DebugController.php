@@ -1,7 +1,7 @@
 <?php
 /**
  * Created D/15/11/2020
- * Updated J/23/12/2021
+ * Updated D/26/06/2022
  *
  * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -134,7 +134,7 @@ class Luigifab_Minifier_DebugController extends Mage_Core_Controller_Front_Actio
 
 		$passwd = Mage::getStoreConfig('minifier/cssjs/debug_password');
 		if (Mage::getStoreConfigFlag('minifier/cssjs/debug_enabled') && (empty($passwd) || ($this->getRequest()->getParam('pass') == $passwd))) {
-			Mage::getSingleton('core/cookie')->set('minifier', 1);
+			Mage::getSingleton('core/cookie')->set('minifier', 1, true);
 			$this->_redirect('*/*/index', ['pass' => $passwd]);
 		}
 		else {
