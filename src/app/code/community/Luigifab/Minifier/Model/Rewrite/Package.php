@@ -1,7 +1,7 @@
 <?php
 /**
  * Created J/12/11/2020
- * Updated V/24/06/2022
+ * Updated D/11/09/2022
  *
  * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2022      | Fabrice Creuzot <fabrice~cellublue~com>
@@ -65,7 +65,7 @@ class Luigifab_Minifier_Model_Rewrite_Package extends Mage_Core_Model_Design_Pac
 
 		// prevent reading files outside of the proper directory while still allowing symlinked files
 		Varien_Profiler::start(__METHOD__);
-		if (str_contains($file, '..')) {
+		if (!empty($file) && str_contains($file, '..')) {
 			Mage::log(sprintf('Invalid path requested: %s (params: %s)', $file, json_encode($params)), Zend_Log::ERR);
 			throw new RuntimeException('Invalid path requested.');
 		}

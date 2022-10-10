@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/14/07/2018
- * Updated V/01/07/2022
+ * Updated S/30/07/2022
  *
  * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -29,14 +29,14 @@ if (is_file('maintenance.flag') || is_file('upgrade.flag'))
 if (is_file('app/bootstrap.php'))
 	require_once('app/bootstrap.php');
 
-require_once('app/Mage.php');
-
 $action = empty($argv[1]) ? false : $argv[1]; // css ou js
 $source = empty($argv[2]) ? false : $argv[2]; // fichier(s) source (fichier(s) existant séparés par des virgules)
 $dest   = empty($argv[3]) ? false : $argv[3]; // fichier cache     (fichier inexistant)
 $dev    = empty($argv[4]) ? false : true;
 
 if (!empty($action) && !empty($source) && !empty($dest)) {
+
+	require_once('app/Mage.php');
 
 	Mage::app('admin')->setUseSessionInUrl(false);
 	Mage::setIsDeveloperMode($dev);

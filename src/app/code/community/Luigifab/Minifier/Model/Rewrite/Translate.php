@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/23/07/2016
- * Updated D/06/10/2019
+ * Updated V/02/09/2022
  *
  * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/minifier
@@ -19,10 +19,16 @@
 
 class Luigifab_Minifier_Model_Rewrite_Translate extends Mage_Core_Model_Translate {
 
+	public function __construct() {
+		$this->_configShare = Mage::getStoreConfigFlag('minifier/general/translations_share');
+		$this->_configOverwrite = Mage::getStoreConfigFlag('minifier/general/translations_overwrite');
+		parent::__construct();
+	}
+
 	protected function _loadModuleTranslation($moduleName, $files, $forceReload = false) {
 
 		// partager les traductions lorsque le mode développeur est activé
-		$scope = (Mage::getStoreConfigFlag('minifier/general/translations_share') && Mage::getIsDeveloperMode()) ? false : $moduleName;
+		$scope = ($this->_configShare && Mage::getIsDeveloperMode()) ? false : $moduleName;
 
 		foreach ($files as $file) {
 			$file = $this->_getModuleFilePath($moduleName, $file);
@@ -35,7 +41,7 @@ class Luigifab_Minifier_Model_Rewrite_Translate extends Mage_Core_Model_Translat
 	protected function _loadThemeTranslation($forceReload = false) {
 
 		// prioriser les traductions du thème
-		if (Mage::getStoreConfigFlag('minifier/general/translations_overwrite')) {
+		if ($this->_configOverwrite) {
 			$data = $this->_getFileData(Mage::getDesign()->getLocaleFileName('translate.csv'));
 			foreach ($data as $key => $value)
 				$this->_data['Zz_Zz'.self::SCOPE_SEPARATOR.$key] = $value;
@@ -48,7 +54,7 @@ class Luigifab_Minifier_Model_Rewrite_Translate extends Mage_Core_Model_Translat
 	protected function _getTranslatedString($text, $code) {
 
 		// prioriser les traductions du thème
-		if (Mage::getStoreConfigFlag('minifier/general/translations_overwrite')) {
+		if ($this->_configOverwrite) {
 			$overload = 'Zz_Zz'.self::SCOPE_SEPARATOR.$text;
 			if (array_key_exists($overload, $this->_data))
 				return $this->_data[$overload];
