@@ -1,10 +1,10 @@
 <?php
 /**
  * Created S/14/07/2018
- * Updated S/30/07/2022
+ * Updated D/06/11/2022
  *
- * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * https://www.luigifab.fr/openmage/minifier
+ * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://github.com/luigifab/openmage-minifier
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -96,10 +96,10 @@ if (!empty($action) && !empty($source) && !empty($dest)) {
 			$program = Mage::getStoreConfig('minifier/cssjs/uglifyjs');
 			if ((!empty($program) && is_executable($program)) || is_executable($program = '/usr/bin/uglifyjs')) {
 				exec(sprintf(
-					'%s --source-map "content=inline,includeSources,base=\'.\',url=\'%s\'" %s --output %s %s',
+					'%s --source-map "content=inline,includeSources,base=\'.\',url=\'%s\'" %s --compress --output %s %s',
 					$program,
 					'inline', //basename($dest).'.map',
-					(mb_stripos($source, 'prototype.js') === false) ? '--mangle reserved=[\'$super\'] --compress' : '',
+					(mb_stripos($source, 'prototype.js') === false) ? '--mangle reserved=[\'$super\']' : '',
 					escapeshellarg($dest),
 					escapeshellarg($source)
 				));

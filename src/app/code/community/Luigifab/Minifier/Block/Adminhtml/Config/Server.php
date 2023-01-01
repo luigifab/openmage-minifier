@@ -1,10 +1,10 @@
 <?php
 /**
  * Created S/03/03/2018
- * Updated L/14/02/2022
+ * Updated S/03/12/2022
  *
- * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * https://www.luigifab.fr/openmage/minifier
+ * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://github.com/luigifab/openmage-minifier
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -21,7 +21,8 @@ class Luigifab_Minifier_Block_Adminhtml_Config_Server extends Mage_Adminhtml_Blo
 
 	public function render(Varien_Data_Form_Element_Abstract $element) {
 
-		return str_replace(['`', "\n"], [chr(194).chr(160), '<br />'], '<tr><td colspan="4"><code style="display:block; margin:1em 0; padding-left:6px; font-size:0.9em; line-height:1.4em; border-left:3px solid #AAA;"><strong>## THE REQUIRED CONFIGURATION</strong>
+		// getPath PR 2774
+		return str_replace(['`', "\n"], [chr(194).chr(160), '<br />'], '<tr><td colspan="'.(empty($element->getPath()) ? 4 : 5).'"><code style="display:block; margin:1em 0; padding-left:6px; font-size:0.9em; line-height:1.4em; border-left:3px solid #AAA;"><strong>## THE REQUIRED CONFIGURATION</strong>
 
 ## for apache (virtual host or htaccess)
 RewriteRule (.*)skin/.*/favicon.ico           $1favicon.ico [L]

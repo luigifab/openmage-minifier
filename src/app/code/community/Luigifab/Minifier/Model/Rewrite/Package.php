@@ -1,11 +1,11 @@
 <?php
 /**
  * Created J/12/11/2020
- * Updated D/11/09/2022
+ * Updated J/17/11/2022
  *
- * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * Copyright 2022      | Fabrice Creuzot <fabrice~cellublue~com>
- * https://www.luigifab.fr/openmage/minifier
+ * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2022-2023 | Fabrice Creuzot <fabrice~cellublue~com>
+ * https://github.com/luigifab/openmage-minifier
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -20,32 +20,38 @@
 
 class Luigifab_Minifier_Model_Rewrite_Package extends Mage_Core_Model_Design_Package {
 
+	protected $_configKey;
+
 	public function __construct() {
 
 		parent::__construct();
 
-		$this->_hasKey = false;
-		if (Mage::getStoreConfig('minifier/cssjs/solution') == 2) {
+		$value = Mage::getStoreConfig('minifier/cssjs/solution');
+		if ($value == 2) {
 			// by file
-			$this->_hasKey = true;
+			$this->_configKey = true;
 		}
-		else if (Mage::getStoreConfig('minifier/cssjs/solution') == 1) {
+		else if ($value == 1) {
 			// global
-			$this->_hasKey = '-'.Mage::getStoreConfig('minifier/cssjs/value');
+			$this->_configKey = '-'.Mage::getStoreConfig('minifier/cssjs/value');
 			if (Mage::getIsDeveloperMode())
-				$this->_hasKey = '-00'.date('YmdHis');
+				$this->_configKey = '-00'.date('YmdHis');
+		}
+		else {
+			// disabled
+			$this->_configKey = false;
 		}
 	}
 
 	public function getFinalUrl($fileName, $url) {
 
 		// no key
-		if (empty($this->_hasKey))
+		if (empty($this->_configKey))
 			return str_replace('-zzyyxx', '', $url);
 
 		// global key
-		if ($this->_hasKey !== true)
-			return str_replace('-zzyyxx', $this->_hasKey, $url);
+		if ($this->_configKey !== true)
+			return str_replace('-zzyyxx', $this->_configKey, $url);
 
 		// by file
 		if (empty($fileName))
@@ -64,10 +70,9 @@ class Luigifab_Minifier_Model_Rewrite_Package extends Mage_Core_Model_Design_Pac
 		}
 
 		// prevent reading files outside of the proper directory while still allowing symlinked files
-		Varien_Profiler::start(__METHOD__);
 		if (!empty($file) && str_contains($file, '..')) {
 			Mage::log(sprintf('Invalid path requested: %s (params: %s)', $file, json_encode($params)), Zend_Log::ERR);
-			throw new RuntimeException('Invalid path requested.');
+			throw new RuntimeException(sprintf('Invalid path requested: %s', $file));
 		}
 
 		if (empty($params['_type']))
@@ -90,7 +95,6 @@ class Luigifab_Minifier_Model_Rewrite_Package extends Mage_Core_Model_Design_Pac
 			$result = $this->getFinalUrl(null, $this->getSkinBaseUrl($params));
 		}
 
-		Varien_Profiler::stop(__METHOD__);
 		return $result;
 	}
 

@@ -1,10 +1,10 @@
 <?php
 /**
  * Created D/15/11/2020
- * Updated D/26/06/2022
+ * Updated J/03/11/2022
  *
- * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * https://www.luigifab.fr/openmage/minifier
+ * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://github.com/luigifab/openmage-minifier
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -80,14 +80,17 @@ class Luigifab_Minifier_DebugController extends Mage_Core_Controller_Front_Actio
 		return $files;
 	}
 
-	public function indexAction() {
-
+	public function preDispatch() {
 		Mage::register('turpentine_nocache_flag', true, true);
+		parent::preDispatch();
+	}
+
+	public function indexAction() {
 
 		if (Mage::getStoreConfigFlag('minifier/cssjs/debug_enabled') && Mage::getStoreConfigFlag(Mage::app()->getStore()->isAdmin() ? 'minifier/cssjs/enabled_back' : 'minifier/cssjs/enabled_front')) {
 
-			$passwd = Mage::getStoreConfig('minifier/cssjs/debug_password');
-			if (!empty($passwd) && ($this->getRequest()->getParam('pass') != $passwd)) {
+			$pass = Mage::getStoreConfig('minifier/cssjs/debug_password');
+			if (!empty($pass) && ($this->getRequest()->getParam('pass') != $pass)) {
 				$link = '';
 				$text = 'invalid pass';
 			}
@@ -95,18 +98,18 @@ class Luigifab_Minifier_DebugController extends Mage_Core_Controller_Front_Actio
 				$files = Mage::getSingleton('core/session')->getData('minifier');
 
 				if (empty(Mage::getSingleton('core/cookie')->get('minifier'))) {
-					$link = ' - <a href="'.Mage::getUrl('*/*/start', ['pass' => $passwd]).'">start</a>';
+					$link = ' - <a href="'.Mage::getUrl('*/*/start', ['pass' => $pass]).'">start</a>';
 					if (empty($files))
-						$link .= ' - <a href="'.Mage::getUrl('*/*/clear', ['pass' => $passwd]).'" style="color:#666;">clear</a>';
+						$link .= ' - <a href="'.Mage::getUrl('*/*/clear', ['pass' => $pass]).'" style="color:#666;">clear</a>';
 					else
-						$link .= ' - <a href="'.Mage::getUrl('*/*/clear', ['pass' => $passwd]).'">clear</a>';
+						$link .= ' - <a href="'.Mage::getUrl('*/*/clear', ['pass' => $pass]).'">clear</a>';
 				}
 				else {
-					$link = ' - <a href="'.Mage::getUrl('*/*/stop', ['pass' => $passwd]).'">stop</a>';
+					$link = ' - <a href="'.Mage::getUrl('*/*/stop', ['pass' => $pass]).'">stop</a>';
 					if (empty($files))
-						$link .= ' - <a href="'.Mage::getUrl('*/*/clear', ['pass' => $passwd]).'" style="color:#666;">clear</a>';
+						$link .= ' - <a href="'.Mage::getUrl('*/*/clear', ['pass' => $pass]).'" style="color:#666;">clear</a>';
 					else
-						$link .= ' - <a href="'.Mage::getUrl('*/*/clear', ['pass' => $passwd]).'">clear</a>';
+						$link .= ' - <a href="'.Mage::getUrl('*/*/clear', ['pass' => $pass]).'">clear</a>';
 				}
 
 				if (is_array($files))
@@ -130,12 +133,10 @@ class Luigifab_Minifier_DebugController extends Mage_Core_Controller_Front_Actio
 
 	public function startAction() {
 
-		Mage::register('turpentine_nocache_flag', true, true);
-
-		$passwd = Mage::getStoreConfig('minifier/cssjs/debug_password');
-		if (Mage::getStoreConfigFlag('minifier/cssjs/debug_enabled') && (empty($passwd) || ($this->getRequest()->getParam('pass') == $passwd))) {
+		$pass = Mage::getStoreConfig('minifier/cssjs/debug_password');
+		if (Mage::getStoreConfigFlag('minifier/cssjs/debug_enabled') && (empty($pass) || ($this->getRequest()->getParam('pass') == $pass))) {
 			Mage::getSingleton('core/cookie')->set('minifier', 1, true);
-			$this->_redirect('*/*/index', ['pass' => $passwd]);
+			$this->_redirect('*/*/index', ['pass' => $pass]);
 		}
 		else {
 			$this->_redirect('*/*/index');
@@ -144,12 +145,10 @@ class Luigifab_Minifier_DebugController extends Mage_Core_Controller_Front_Actio
 
 	public function clearAction() {
 
-		Mage::register('turpentine_nocache_flag', true, true);
-
-		$passwd = Mage::getStoreConfig('minifier/cssjs/debug_password');
-		if (Mage::getStoreConfigFlag('minifier/cssjs/debug_enabled') && (empty($passwd) || ($this->getRequest()->getParam('pass') == $passwd))) {
+		$pass = Mage::getStoreConfig('minifier/cssjs/debug_password');
+		if (Mage::getStoreConfigFlag('minifier/cssjs/debug_enabled') && (empty($pass) || ($this->getRequest()->getParam('pass') == $pass))) {
 			Mage::getSingleton('core/session')->setData('minifier', null);
-			$this->_redirect('*/*/index', ['pass' => $passwd]);
+			$this->_redirect('*/*/index', ['pass' => $pass]);
 		}
 		else {
 			$this->_redirect('*/*/index');
@@ -158,12 +157,10 @@ class Luigifab_Minifier_DebugController extends Mage_Core_Controller_Front_Actio
 
 	public function stopAction() {
 
-		Mage::register('turpentine_nocache_flag', true, true);
-
-		$passwd = Mage::getStoreConfig('minifier/cssjs/debug_password');
-		if (Mage::getStoreConfigFlag('minifier/cssjs/debug_enabled') && (empty($passwd) || ($this->getRequest()->getParam('pass') == $passwd))) {
+		$pass = Mage::getStoreConfig('minifier/cssjs/debug_password');
+		if (Mage::getStoreConfigFlag('minifier/cssjs/debug_enabled') && (empty($pass) || ($this->getRequest()->getParam('pass') == $pass))) {
 			Mage::getSingleton('core/cookie')->delete('minifier');
-			$this->_redirect('*/*/index', ['pass' => $passwd]);
+			$this->_redirect('*/*/index', ['pass' => $pass]);
 		}
 		else {
 			$this->_redirect('*/*/index');

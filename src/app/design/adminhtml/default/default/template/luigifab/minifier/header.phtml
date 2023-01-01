@@ -1,10 +1,10 @@
 <?php
 /**
  * Created S/14/04/2018
- * Updated V/27/03/2022
+ * Updated D/11/12/2022
  *
- * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * https://www.luigifab.fr/openmage/minifier
+ * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://github.com/luigifab/openmage-minifier
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -17,8 +17,8 @@
  * GNU General Public License (GPL) for more details.
  */
 
-$database = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchOne('SELECT VERSION()');
-$browser  = $this->helper('core')->isModuleEnabled('Luigifab_Apijs') ? Mage::getSingleton('apijs/useragentparser')->parse() : null;
+$dbVersion = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchOne('SELECT VERSION()');
+$browser   = $this->helper('core')->isModuleEnabled('Luigifab_Apijs') ? Mage::getSingleton('apijs/useragentparser')->parse() : null;
 
 $session = (string) Mage::getConfig()->getNode('global/session_save');
 if (in_array($session, ['db', 'redis']) && $this->helper('core')->isModuleEnabled('Cm_RedisSession') &&
@@ -39,7 +39,7 @@ $cache = (stripos($cache, 'redis') !== false) ? 'redis' : (empty($cache) ? 'file
 	</a>
 	<div class="header-right">
 		<p style="margin:0; font-size:11px; line-height:150%;">
-			<strong><?php echo ucfirst($this->formatDate(null, 'full', true)) ?></strong>
+			<?php echo ucfirst($this->formatDate(null, 'full', true)) ?>
 			// <a href="<?php echo $this->getUrl('*/system_account/index') ?>" style="color:white; text-decoration:none;">
 				<?php echo str_replace('<strong', '<strong style="text-decoration:underline;"', $this->__('Logged in as %s', $this->getUser()->getData('username'))) ?> (<?php echo $this->getUser()->getRole()->getData('role_name') ?>)
 			</a>
@@ -54,7 +54,7 @@ $cache = (stripos($cache, 'redis') !== false) ? 'redis' : (empty($cache) ? 'file
 			<?php echo implode(' ', array_map(static function ($value) { return number_format($value, 2); }, sys_getloadavg())) ?> //
 			OpenMage <?php echo Mage::getOpenMageVersion() ?> //
 			<abbr>PHP</abbr> <?php echo implode('.', array_slice(preg_split('#\D#', PHP_VERSION), 0, 3)) ?> //
-			<abbr><?php echo $this->__('DB') ?></abbr> <?php echo implode('.', array_slice(preg_split('#\D#', $database), 0, 3)) ?> //
+			<abbr><?php echo $this->__('DB') ?></abbr> <?php echo implode('.', array_slice(preg_split('#\D#', $dbVersion), 0, 3)) ?> //
 			Session <?php echo $session ?> //
 			Cache <?php echo $cache ?>
 		</p>

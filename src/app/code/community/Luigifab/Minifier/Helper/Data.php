@@ -1,10 +1,10 @@
 <?php
 /**
  * Created S/20/06/2015
- * Updated S/19/02/2022
+ * Updated V/09/12/2022
  *
- * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * https://www.luigifab.fr/openmage/minifier
+ * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://github.com/luigifab/openmage-minifier
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -18,6 +18,8 @@
  */
 
 class Luigifab_Minifier_Helper_Data extends Mage_Core_Helper_Abstract {
+
+	protected $_cpucore;
 
 	public function getVersion() {
 		return (string) Mage::getConfig()->getModuleConfig('Luigifab_Minifier')->version;
@@ -111,7 +113,7 @@ class Luigifab_Minifier_Helper_Data extends Mage_Core_Helper_Abstract {
 			$user = $action->getFullActionName();
 		// frontend
 		else
-			$user = sprintf('frontend %d', Mage::app()->getStore()->getData('code'));
+			$user = sprintf('frontend %s', Mage::app()->getStore()->getData('code'));
 
 		return $user;
 	}
@@ -119,12 +121,12 @@ class Luigifab_Minifier_Helper_Data extends Mage_Core_Helper_Abstract {
 
 	public function getNumberOfCpuCore() {
 
-		if (empty($this->cpucore)) {
+		if (empty($this->_cpucore)) {
 			exec('nproc', $data);
-			$this->cpucore = max(1, (int) trim(implode($data)));
+			$this->_cpucore = max(1, (int) trim(implode($data)));
 		}
 
-		return $this->cpucore;
+		return $this->_cpucore;
 	}
 
 	public function afterToHtml(string $html) {

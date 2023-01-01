@@ -1,10 +1,10 @@
 <?php
 /**
  * Created S/23/07/2016
- * Updated V/02/09/2022
+ * Updated J/20/10/2022
  *
- * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * https://www.luigifab.fr/openmage/minifier
+ * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://github.com/luigifab/openmage-minifier
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -19,10 +19,15 @@
 
 class Luigifab_Minifier_Model_Rewrite_Translate extends Mage_Core_Model_Translate {
 
+	protected $_configShare;
+	protected $_configOverwrite;
+
 	public function __construct() {
+
+		parent::__construct();
+
 		$this->_configShare = Mage::getStoreConfigFlag('minifier/general/translations_share');
 		$this->_configOverwrite = Mage::getStoreConfigFlag('minifier/general/translations_overwrite');
-		parent::__construct();
 	}
 
 	protected function _loadModuleTranslation($moduleName, $files, $forceReload = false) {

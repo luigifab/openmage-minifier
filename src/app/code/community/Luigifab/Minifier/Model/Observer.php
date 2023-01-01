@@ -1,10 +1,10 @@
 <?php
 /**
  * Created S/20/06/2015
- * Updated D/18/09/2022
+ * Updated D/11/12/2022
  *
- * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * https://www.luigifab.fr/openmage/minifier
+ * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://github.com/luigifab/openmage-minifier
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -30,10 +30,10 @@ class Luigifab_Minifier_Model_Observer extends Luigifab_Minifier_Helper_Data {
 			Mage::getBaseDir('media').'/js/'
 		];
 
-		exec('rm -rf '.implode(' ', $dirs));
-		exec('rm -f  '.Mage::getBaseDir('media').'/minifier-cache/virtual*');
+		exec('rm -rf '.implode(' ', array_map('escapeshellarg', $dirs)));
+		exec('rm -f  '.escapeshellarg(Mage::getBaseDir('media').'/minifier-cache/virtual*'));
 
-		$this->updateConfig($observer);
+		$this->clearCache($observer);
 	}
 
 	// EVENT admin_system_config_changed_section_minifier (adminhtml)
@@ -46,7 +46,7 @@ class Luigifab_Minifier_Model_Observer extends Luigifab_Minifier_Helper_Data {
 	}
 
 	// EVENT controller_action_predispatch_adminhtml_index_changeLocale (adminhtml)
-	public function updateBackgendLanguage(Varien_Event_Observer $observer) {
+	public function updateBackendLanguage(Varien_Event_Observer $observer) {
 
 		$locale = $observer->getData('controller_action')->getRequest()->getParam('locale');
 		Mage::getSingleton('core/session')->setData('locale', $locale);
@@ -70,18 +70,23 @@ class Luigifab_Minifier_Model_Observer extends Luigifab_Minifier_Helper_Data {
 
 	protected function searchCurrentLocale(array $locales, string $result = 'en_US') {
 
+		$codes = [];
+
 		// recherche des préférences dans HTTP_ACCEPT_LANGUAGE
 		// https://stackoverflow.com/a/33748742
-		$codes = array_reduce(
-			empty(getenv('HTTP_ACCEPT_LANGUAGE')) ? [] : explode(',', getenv('HTTP_ACCEPT_LANGUAGE')),
-			static function ($items, $item) {
-				[$code, $q] = explode(';q=', $item.';q=1');
-				$items[str_replace('-', '_', $code)] = (float) $q;
-				return $items;
-			}, []);
+		if (!empty(getenv('HTTP_ACCEPT_LANGUAGE'))) {
 
-		arsort($codes);
-		$codes = array_map('\strval', array_keys($codes));
+			$codes = array_reduce(
+				explode(',', getenv('HTTP_ACCEPT_LANGUAGE')),
+				static function ($items, $item) {
+					[$code, $q] = explode(';q=', $item.';q=1');
+					$items[str_replace('-', '_', $code)] = (float) $q;
+					return $items;
+				}, []);
+
+			arsort($codes);
+			$codes = array_map('\strval', array_keys($codes));
+		}
 
 		// ajoute la locale présente dans l'url en premier car elle est prioritaire
 		if (!empty($_GET['lang'])) {
@@ -92,7 +97,6 @@ class Luigifab_Minifier_Model_Observer extends Luigifab_Minifier_Helper_Data {
 		}
 
 		// cherche la locale à utiliser
-		// essaye es ou fil puis es_ES ou fil_PH
 		foreach ($codes as $code) {
 
 			if ((strlen($code) >= 2) && !str_contains($code, '_')) {

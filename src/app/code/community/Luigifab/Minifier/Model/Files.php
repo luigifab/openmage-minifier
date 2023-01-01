@@ -1,11 +1,11 @@
 <?php
 /**
  * Created W/13/04/2016
- * Updated D/26/06/2022
+ * Updated D/06/11/2022
  *
- * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * Copyright 2022      | Fabrice Creuzot <fabrice~cellublue~com>
- * https://www.luigifab.fr/openmage/minifier
+ * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2022-2023 | Fabrice Creuzot <fabrice~cellublue~com>
+ * https://github.com/luigifab/openmage-minifier
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -22,9 +22,7 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 
 	public function getMinifiedFiles(int $storeId) {
 
-		if (($storeId == 0) && !Mage::getStoreConfigFlag('minifier/cssjs/enabled_back'))
-			return [];
-		if (($storeId != 0) && !Mage::getStoreConfigFlag('minifier/cssjs/enabled_front', $storeId))
+		if (!Mage::getStoreConfigFlag(($storeId == 0) ? 'minifier/cssjs/enabled_back' : 'minifier/cssjs/enabled_front', $storeId))
 			return [];
 
 		$dir = Mage::getBaseDir('media').'/minifier-cache/';
@@ -131,7 +129,8 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 				array_map('unlink', glob($outdated));
 
 				$new = true;
-				$cmd = sprintf('php %s %s %s %s %d >> %s 2>&1 & echo $!',
+				$cmd = sprintf('%s %s %s %s %s %d >> %s 2>&1 & echo $!',
+					'php'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION,
 					str_replace('Minifier/etc', 'Minifier/lib/minify.php', Mage::getModuleDir('etc', 'Luigifab_Minifier')),
 					(mb_stripos($source, '.css') === false) ? 'js' : 'css',
 					escapeshellarg($source),
@@ -184,7 +183,8 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 				unset($files[$idx]);
 		}
 
-		$cmd = sprintf('php %s %s %s %s %d >> %s 2>&1',
+		$cmd = sprintf('%s %s %s %s %s %d >> %s 2>&1',
+			'php'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION,
 			str_replace('Minifier/etc', 'Minifier/lib/minify.php', Mage::getModuleDir('etc', 'Luigifab_Minifier')),
 			(mb_stripos($dest, '.js') === false) ? 'mergecss' : 'mergejs',
 			implode(',', array_map('escapeshellarg', $files)),
@@ -271,12 +271,12 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 		// récupère la liste des fichiers depuis le layout
 		$head  = Mage::app()->getLayout()->getBlock('head');
 		$doc   = new DOMDocument();
-		@$doc->loadHTML($this->merge('all')->_packageLayout->asNiceXml());
+		@$doc->loadHTML($this->merge('all')->_packageLayout->asNiceXml(), LIBXML_NOERROR);
 		$xpath = new DomXPath($doc);
 
 		foreach ($xpath->query('//action[@method="removeItem"]') as $element) {
 
-			if (stripos($element->getNodePath(), 'oauth') !== false)
+			if (str_contains($element->getNodePath(), 'oauth'))
 				continue;
 
 			$config = $element->getAttribute('ifconfig');
@@ -304,7 +304,7 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 
 		foreach ($xpath->query('//action[@method="addItem"]|//action[@method="addCss"]|//action[@method="addJs"]') as $element) {
 
-			if (stripos($element->getNodePath(), 'oauth') !== false)
+			if (str_contains($element->getNodePath(), 'oauth'))
 				continue;
 
 			$config = $element->getAttribute('ifconfig');

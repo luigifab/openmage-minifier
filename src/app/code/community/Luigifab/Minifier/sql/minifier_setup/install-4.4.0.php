@@ -1,10 +1,10 @@
 <?php
 /**
  * Created J/03/11/2016
- * Updated V/18/06/2021
+ * Updated L/26/12/2022
  *
- * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * https://www.luigifab.fr/openmage/minifier
+ * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://github.com/luigifab/openmage-minifier
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -17,7 +17,7 @@
  * GNU General Public License (GPL) for more details.
  */
 
-// de manière à empécher de lancer cette procédure plusieurs fois
+// prevent multiple execution
 $lock = Mage::getModel('index/process')->setId('minifier_setup');
 if ($lock->isLocked())
 	Mage::throwException('Please wait, install is already in progress...');
@@ -25,7 +25,7 @@ if ($lock->isLocked())
 $lock->lockAndBlock();
 $this->startSetup();
 
-// de manière à continuer quoi qu'il arrive
+// ignore user abort and time limit
 ignore_user_abort(true);
 set_time_limit(0);
 
@@ -51,7 +51,7 @@ try {
 }
 catch (Throwable $t) {
 	$lock->unlock();
-	throw $t;
+	Mage::throwException($t);
 }
 
 $this->endSetup();

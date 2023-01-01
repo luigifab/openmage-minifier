@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created L/27/06/2011
- * Updated V/02/09/2022
+ * Updated L/10/10/2022
  *
- * Copyright 2011-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * https://www.luigifab.fr/openmage/minifier
+ * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://github.com/luigifab/openmage-minifier
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -20,7 +20,7 @@
 <config>
 	<modules>
 		<Luigifab_Minifier>
-			<version>4.3.2</version>
+			<version>4.4.0</version>
 		</Luigifab_Minifier>
 	</modules>
 	<global>
@@ -96,7 +96,7 @@
 				<observers>
 					<minifier>
 						<class>minifier/observer</class>
-						<method>updateBackgendLanguage</method>
+						<method>updateBackendLanguage</method>
 					</minifier>
 				</observers>
 			</controller_action_predispatch_adminhtml_index_changeLocale>
