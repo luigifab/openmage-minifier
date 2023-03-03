@@ -1,7 +1,7 @@
 <?php
 /**
  * Created L/16/07/2018
- * Updated V/11/02/2022
+ * Updated M/14/02/2023
  *
  * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-minifier
@@ -28,6 +28,7 @@ class Luigifab_Minifier_Helper_Rewrite_Js extends Mage_Core_Helper_Js {
 	}
 
 	public function getTranslatorScriptContent() {
+		$this->_translateData = null;
 		return 'var Translator = new Translate('.$this->getTranslateJson().');';
 	}
 }

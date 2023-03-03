@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/14/04/2018
- * Updated D/11/12/2022
+ * Updated L/27/02/2023
  *
  * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-minifier
@@ -21,9 +21,16 @@ $dbVersion = Mage::getSingleton('core/resource')->getConnection('core_read')->fe
 $browser   = $this->helper('core')->isModuleEnabled('Luigifab_Apijs') ? Mage::getSingleton('apijs/useragentparser')->parse() : null;
 
 $session = (string) Mage::getConfig()->getNode('global/session_save');
-if (in_array($session, ['db', 'redis']) && $this->helper('core')->isModuleEnabled('Cm_RedisSession') &&
-	Mage::getConfig()->getNode('global/redis_session') && Mage::getSingleton('Cm_RedisSession_Model_Session')->hasConnection())
-	$session = 'redis';
+if (in_array($session, ['db', 'redis']) && $this->helper('core')->isModuleEnabled('Cm_RedisSession') && Mage::getConfig()->getNode('global/redis_session')) {
+	try {
+		$model = Mage::getSingleton('Cm_RedisSession_Model_Session');
+		if (method_exists($model, 'hasConnection') && $model->hasConnection())
+			$session = 'redis';
+		else if (method_exists($model, 'getInfo') && $model->getInfo())
+			$session = 'redis';
+	}
+	catch (Throwable $t) { }
+}
 
 $cache = (string) Mage::getConfig()->getNode('global/cache/backend');
 $cache = (stripos($cache, 'redis') !== false) ? 'redis' : (empty($cache) ? 'files' : $cache);
