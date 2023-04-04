@@ -1,7 +1,7 @@
 <?php
 /**
  * Created D/20/05/2018
- * Updated D/18/07/2021
+ * Updated J/09/03/2023
  *
  * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-minifier
@@ -64,5 +64,9 @@ class Luigifab_Minifier_Block_Calendar extends Mage_Core_Block_Html_Calendar {
 		$this->assign('enUS', json_encode($enUS));
 
 		return $this->renderView();
+	}
+
+	public function getStoreTimestamp($store = null) {
+		return 'parseInt(Date.now() / 1000)';
 	}
 }

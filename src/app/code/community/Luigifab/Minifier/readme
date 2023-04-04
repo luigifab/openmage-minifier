@@ -73,7 +73,12 @@ Files and directories
 - app/design/adminhtml/default/default/template/luigifab/minifier/
 - app/design/frontend/base/default/layout/luigifab/minifier.xml
 - app/design/frontend/base/default/template/luigifab/minifier/
-
+Depends (with php exec)
+- npm
+- cleancss
+- uglifyjs
+- rm -rf
+- also used: nproc, ps aux | grep
 
 
 Translations in en-US (english/United-States) by:

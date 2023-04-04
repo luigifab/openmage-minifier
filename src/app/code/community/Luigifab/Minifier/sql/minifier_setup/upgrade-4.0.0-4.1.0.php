@@ -1,7 +1,7 @@
 <?php
 /**
  * Created L/13/09/2021
- * Updated L/26/12/2022
+ * Updated V/03/02/2023
  *
  * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-minifier
@@ -32,27 +32,15 @@ set_time_limit(0);
 try {
 	$config = Mage::getModel('core/config_data')->load('minifier/html/enabled', 'path');
 	if (!empty($config->getData('value'))) {
-		Mage::getModel('core/config_data')
-			->setData('path', 'minifier/html/enabled_back')
-			->setData('value', 1)
-			->save();
-		Mage::getModel('core/config_data')
-			->setData('path', 'minifier/html/enabled_front')
-			->setData('value', 1)
-			->save();
+		$this->setConfigData('minifier/html/enabled_back', '1');
+		$this->setConfigData('minifier/html/enabled_front', '1');
 	}
 	$config->delete();
 
 	$config = Mage::getModel('core/config_data')->load('minifier/cssjs/enabled', 'path');
 	if (!empty($config->getData('value'))) {
-		Mage::getModel('core/config_data')
-			->setData('path', 'minifier/cssjs/enabled_back')
-			->setData('value', 1)
-			->save();
-		Mage::getModel('core/config_data')
-			->setData('path', 'minifier/cssjs/enabled_front')
-			->setData('value', 1)
-			->save();
+		$this->setConfigData('minifier/cssjs/enabled_back', '1');
+		$this->setConfigData('minifier/cssjs/enabled_front', '1');
 	}
 	$config->delete();
 

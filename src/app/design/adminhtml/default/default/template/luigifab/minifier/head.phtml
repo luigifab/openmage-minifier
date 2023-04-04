@@ -1,7 +1,7 @@
 <?php
 /**
  * Created V/15/04/2016
- * Updated V/28/10/2022
+ * Updated V/10/02/2023
  *
  * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-minifier
@@ -50,7 +50,7 @@ Ext.UpdateManager.defaults.disableCaching = true;
 <?php endif ?>
 //]]></script>
 
-<?php if ($this->getCanLoadTinyMce()): // TinyMCE is broken when loaded through index.php ?>
+<?php if (!empty($this->getCanLoadTinyMce()) && (Mage::getStoreConfig('cms/wysiwyg/enabled') != 'disabled')): ?>
 	<script type="text/javascript" src="<?php echo Mage::getDesign()->getJsUrl('tiny_mce/tiny_mce.js') ?>"></script>
 <?php endif ?>
 <?php if (!Mage::getStoreConfigFlag('minifier/cssjs/enabled_back')): ?>

@@ -1,7 +1,7 @@
 <?php
 /**
  * Created W/13/04/2016
- * Updated D/06/11/2022
+ * Updated V/10/03/2023
  *
  * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2022-2023 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -43,7 +43,8 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 
 		// cherche les fichiers sources
 		// depuis le cache ou depuis le layout
-		$items = Mage::app()->useCache('layout') ? Mage::app()->loadCache('minifier_layout_'.$storeId) : null;
+		$ckey  = ($storeId == 0) ? 'admin_'.Mage::getSingleton('core/translate')->getLocale() : 'store_'.$storeId;
+		$items = Mage::app()->useCache('layout') ? Mage::app()->loadCache('minifier_layout_'.$ckey) : null;
 		$items = empty($items) ? null : @json_decode($items, true);
 
 		if (empty($items)) {
@@ -52,11 +53,13 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 			$items = $this->searchFiles($design, $storeId);
 
 			if (Mage::app()->useCache('layout'))
-				Mage::app()->saveCache(json_encode($items), 'minifier_layout_'.$storeId,
+				Mage::app()->saveCache(json_encode($items), 'minifier_layout_'.$ckey,
 					[Mage_Core_Model_Layout_Update::LAYOUT_GENERAL_CACHE_TAG]);
 		}
 
 		// minifie les fichiers sources (et change la clé)
+		// attention lorsque les fichiers sont en cache et que les fichiers sont supprimés sans vider le cache
+		//  les fichiers virtuels ne seront pas régénérés car il faut passer dans searchFiles avant minifyFiles
 		$hasChange = $this->minifyFiles($items);
 		if ($hasChange && (Mage::getStoreConfig('minifier/cssjs/solution') == 1)) {
 			$value = Mage::getSingleton('core/date')->date('YmdHis');
@@ -94,7 +97,6 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 	// utilise uglify-js et clean-css
 	protected function minifyFiles(array $items) {
 
-		$core  = max(1, Mage::helper('minifier')->getNumberOfCpuCore() - 2);
 		$pids  = [];
 		$files = [];
 		$new   = false;
@@ -121,6 +123,29 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 
 			if (is_file($source) && !is_file($cache)) {
 
+				if (empty($core)) {
+					$core = max(1, Mage::helper('minifier')->getNumberOfCpuCore() - 2);
+					$maxc = ceil($core * 1.5);
+				}
+
+				while (count($pids) >= $core) {
+					foreach ($pids as $key => $pid) {
+						if (file_exists('/proc/'.$pid))
+							clearstatcache('/proc/'.$pid);
+						else
+							unset($pids[$key]);
+					}
+					usleep(100000); // 0.1 s
+				}
+
+				$runs = [];
+				exec('ps aux | grep Minifier/lib/minify.php', $runs);
+				while (count($runs) >= $maxc) {
+					usleep(90000); // 0.09 s
+					$runs = [];
+					exec('ps aux | grep Minifier/lib/minify.php', $runs);
+				}
+
 				clearstatcache(true, $lock);
 				if (!is_file($lock))
 					file_put_contents($lock, getenv('REMOTE_ADDR'), LOCK_EX);
@@ -140,16 +165,6 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 
 				Mage::log($cmd, Zend_Log::DEBUG, 'minifier.log');
 				$pids[] = exec($cmd);
-
-				while (count($pids) >= $core) {
-					foreach ($pids as $key => $pid) {
-						if (file_exists('/proc/'.$pid))
-							clearstatcache('/proc/'.$pid);
-						else
-							unset($pids[$key]);
-					}
-					usleep(100000); // 0.1 s
-				}
 			}
 		}
 

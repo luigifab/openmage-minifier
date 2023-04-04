@@ -1,7 +1,7 @@
 <?php
 /**
  * Created J/03/11/2016
- * Updated L/26/12/2022
+ * Updated V/03/02/2023
  *
  * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-minifier
@@ -39,11 +39,12 @@ try {
 		DELETE FROM '.$this->getTable('core_config_data').' WHERE path LIKE "design/head/shortcut_icon";
 		DELETE FROM '.$this->getTable('core_config_data').' WHERE path LIKE "dev/css/%";
 		DELETE FROM '.$this->getTable('core_config_data').' WHERE path LIKE "dev/js/%";
-		INSERT INTO '.$this->getTable('core_config_data').' (scope, scope_id, path, value) VALUES ("default", 0, "dev/css/merge_css_files", 0);
-		INSERT INTO '.$this->getTable('core_config_data').' (scope, scope_id, path, value) VALUES ("default", 0, "dev/js/merge_files", 0);
 
 		DROP TABLE IF EXISTS '.$this->getTable('luigifab_minifier_kraken').';
 	');
+
+	$this->setConfigData('dev/css/merge_css_files', '0');
+	$this->setConfigData('dev/js/merge_files', '0');
 
 	$variable = Mage::getModel('core/variable')->loadByCode('cachekey');
 	if (!empty($variable->getId()))
