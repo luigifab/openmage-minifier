@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/14/04/2018
- * Updated L/27/02/2023
+ * Updated V/02/06/2023
  *
  * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-minifier
@@ -47,6 +47,9 @@ $cache = (stripos($cache, 'redis') !== false) ? 'redis' : (empty($cache) ? 'file
 	<div class="header-right">
 		<p style="margin:0; font-size:11px; line-height:150%;">
 			<?php echo ucfirst($this->formatDate(null, 'full', true)) ?>
+			<?php if (Mage::getIsDeveloperMode()): ?>
+				(<?php echo date('H:i:s') ?> utc)
+			<?php endif ?>
 			// <a href="<?php echo $this->getUrl('*/system_account/index') ?>" style="color:white; text-decoration:none;">
 				<?php echo str_replace('<strong', '<strong style="text-decoration:underline;"', $this->__('Logged in as %s', $this->getUser()->getData('username'))) ?> (<?php echo $this->getUser()->getRole()->getData('role_name') ?>)
 			</a>
@@ -59,11 +62,14 @@ $cache = (stripos($cache, 'redis') !== false) ? 'redis' : (empty($cache) ? 'file
 				<strong>dev:on</strong> //
 			<?php endif ?>
 			<?php echo implode(' ', array_map(static function ($value) { return number_format($value, 2); }, sys_getloadavg())) ?> //
-			OpenMage <?php echo Mage::getOpenMageVersion() ?> //
-			<abbr>PHP</abbr> <?php echo implode('.', array_slice(preg_split('#\D#', PHP_VERSION), 0, 3)) ?> //
-			<abbr><?php echo $this->__('DB') ?></abbr> <?php echo implode('.', array_slice(preg_split('#\D#', $dbVersion), 0, 3)) ?> //
-			Session <?php echo $session ?> //
-			Cache <?php echo $cache ?>
+			OpenMage <?php echo Mage::getOpenMageVersion() ?>
+			// <abbr>PHP</abbr> <?php echo implode('.', array_slice(preg_split('#\D#', PHP_VERSION), 0, 3)) ?>
+			// <abbr><?php echo $this->__('DB') ?></abbr> <?php echo implode('.', array_slice(preg_split('#\D#', $dbVersion), 0, 3)) ?>
+			<?php if (Mage::getIsDeveloperMode()): ?>
+				(<?php echo Mage::getConfig()->getNode('global/resources/default_setup/connection/dbname') ?>)
+			<?php endif ?>
+			// Session <?php echo $session ?>
+			// Cache <?php echo $cache ?>
 		</p>
 	</div>
 </div>
