@@ -41,6 +41,9 @@
         "ext-mbstring": "*",
         "ext-zlib": "*"
     },
+    "suggest": {
+        "ext-tidy": "Needed to minify HTML code."
+    },
     "minimum-stability": "dev",
     "extra": {
         "map": [

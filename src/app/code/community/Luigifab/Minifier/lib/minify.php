@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/14/07/2018
- * Updated V/19/05/2023
+ * Updated J/08/06/2023
  *
  * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-minifier
@@ -56,7 +56,7 @@ if (!empty($action) && !empty($source) && !empty($dest)) {
 				));
 				exit(0);
 			}
-			Mage::throwExeption('cleancss not found');
+			Mage::throwException('cleancss not found');
 		}
 
 		if (($action == 'mergejs') || (stripos($dest, 'virtual-') !== false)) {
@@ -72,7 +72,7 @@ if (!empty($action) && !empty($source) && !empty($dest)) {
 				));
 				exit(0);
 			}
-			Mage::throwExeption('uglifyjs not found');
+			Mage::throwException('uglifyjs not found');
 		}
 
 		if ($action == 'css') {
@@ -87,7 +87,7 @@ if (!empty($action) && !empty($source) && !empty($dest)) {
 				));
 				exit(0);
 			}
-			Mage::throwExeption('cleancss not found');
+			Mage::throwException('cleancss not found');
 		}
 
 		if ($action == 'js') {
@@ -104,10 +104,10 @@ if (!empty($action) && !empty($source) && !empty($dest)) {
 				));
 				exit(0);
 			}
-			Mage::throwExeption('uglifyjs not found');
+			Mage::throwException('uglifyjs not found');
 		}
 
-		Mage::throwExeption('action not specified');
+		Mage::throwException('action not specified');
 	}
 	catch (Throwable $t) {
 		Mage::logException($t);
