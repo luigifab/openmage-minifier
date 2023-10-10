@@ -1,7 +1,7 @@
 <?php
 /**
  * Created W/13/04/2016
- * Updated V/10/03/2023
+ * Updated J/05/10/2023
  *
  * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2022-2023 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -123,12 +123,15 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 
 			if (is_file($source) && !is_file($cache)) {
 
-				if (empty($core)) {
-					$core = max(1, Mage::helper('minifier')->getNumberOfCpuCore() - 2);
-					$maxc = ceil($core * 1.5);
+				if (empty($maxc)) {
+					// leaves 2 cores free, but because $runs include grep check, we add 2 for $maxc
+					// [] => 18:14 0:00 php ...
+					// [] => 18:14 0:00 sh -c ps aux | grep Minifier/lib/minify.php
+					// [] => 18:14 0:00 grep Minifier/lib/minify.php
+					$maxc = 2 + max(1, Mage::helper('minifier')->getNumberOfCpuCore() - 2);
 				}
 
-				while (count($pids) >= $core) {
+				while (count($pids) >= $maxc) {
 					foreach ($pids as $key => $pid) {
 						if (file_exists('/proc/'.$pid))
 							clearstatcache('/proc/'.$pid);
@@ -520,14 +523,14 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 
 		// example.js => example.md5name.js
 		if ($min) {
-			$key  = substr(md5($file), 0, 10);
+			$key  = substr(md5($file), 0, 10); // not mb_substr
 			$name = str_replace(['.css', '.js'], ['.'.$key.'.css', '.'.$key.'.js'], $name);
 		}
 
 		// example.js         => example.md5content.min.js
 		// example.md5name.js => example.md5name.md5content.min.js
 		if ($md5) {
-			$key  = is_file($file) ? substr(md5_file($file), 0, 10) : 'na';
+			$key  = is_file($file) ? substr(md5_file($file), 0, 10) : 'na'; // not mb_substr
 			$name = str_replace(['.css', '.js'], ['.'.$key.'.min.css', '.'.$key.'.min.js'], $name);
 		}
 		// example.md5name.js => example.md5name.min.js

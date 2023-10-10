@@ -1,7 +1,7 @@
 <?php
 /**
  * Created D/15/11/2020
- * Updated J/03/11/2022
+ * Updated J/21/09/2023
  *
  * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-minifier
@@ -55,11 +55,11 @@ class Luigifab_Minifier_DebugController extends Mage_Core_Controller_Front_Actio
 
 					if (($file['media'] != 'virtual') && is_file($src)) {
 
-						$md5Name = substr(md5($src), 0, 10);
-						$md5Data = substr(md5_file($src), 0, 10);
+						$md5name = substr(md5($src), 0, 10);      // not mb_substr
+						$md5data = substr(md5_file($src), 0, 10); // not mb_substr
 
 						$data[$nkey]['dst_link'] = '<a href="'.$base.$dst.'">'.str_replace(
-							[$md5Name, $md5Data], ['<b>'.$md5Name.'</b>', '<b>'.$md5Data.'</b>'], $dst
+							[$md5name, $md5data], ['<b>'.$md5name.'</b>', '<b>'.$md5data.'</b>'], $dst
 						).'</a>';
 					}
 

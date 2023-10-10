@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/20/06/2015
- * Updated D/11/12/2022
+ * Updated J/21/09/2023
  *
  * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-minifier
@@ -74,6 +74,7 @@ class Luigifab_Minifier_Model_Observer extends Luigifab_Minifier_Helper_Data {
 
 		// recherche des préférences dans HTTP_ACCEPT_LANGUAGE
 		// https://stackoverflow.com/a/33748742
+		// no mb_functions for locale codes
 		if (!empty(getenv('HTTP_ACCEPT_LANGUAGE'))) {
 
 			$codes = array_reduce(
