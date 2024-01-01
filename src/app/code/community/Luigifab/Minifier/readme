@@ -1,18 +1,18 @@
 Docs      : https://www.luigifab.fr/openmage/minifier
 Tracker   : https://github.com/luigifab/openmage-minifier
 Composer  : https://packagist.org/packages/luigifab/openmage-minifier
-Module    : Luigifab/Minifier (ex Compressor)
-License   : GNU GPL 2+ (https://opensource.org/licenses/gpl-2.0)
-Copyright : 2011-2023 Fabrice Creuzot (luigifab) <code~luigifab~fr>
+Module    : Luigifab/Minifier (original, ex Compressor)
+License   : GNU GPL 2.0+ (https://opensource.org/licenses/gpl-2.0)
+Copyright : 2011-2024 Fabrice Creuzot (luigifab) <code~luigifab~fr>
 Copyright : 2022-2023 Fabrice Creuzot <fabrice~cellublue~com>
 
 
 
 
-IF YOU FOUND A MISTAKE OR A BUG, PLEASE CONTACT ME (IN FRENCH OR IN ENGLISH).
-CSS AND JS FILES ARE MINIFIED WITH clean-css (github.com/jakubpawlowicz/clean-css) AND uglify-js (github.com/mishoo/uglifyjs).
-ALL FILES (INCLUDING DOCUMENTATION AND TRANSLATIONS) ARE LICENSED UNDER THE TERMS OF THE GNU GPL 2+ LICENSE.
-
+CSS AND JS FILES ARE MINIFIED WITH clean-css (github.com/jakubpawlowicz/clean-css) AND uglify-js (github.com/mishoo/uglifyjs)
+CSV FILES ARE GENERATED WITH translator (https://github.com/luigifab/translator)
+ALL FILES ARE LICENSED UNDER THE TERMS OF THE GNU GPL 2.0+ LICENSE
+THAT BEING SAID SOME FILES COME FROM OTHER PROJECTS AND ARE UNDER OTHER LICENSES (SEE AT THE END OF THIS FILE)
 
 
 Rewrite
@@ -35,7 +35,9 @@ Event
 - adminhtml | core_locale_set_locale                                     | minifier/observer::setBackendLanguage
 Cron
 - none
-SQL
+Frontend routes
+- */minifier/ (standard)
+Database
 - update core_config_data where path like minifier/%
 - update core_config_data where path like compressor/%
 Files and directories
@@ -78,12 +80,20 @@ Depends (with php exec)
 - cleancss
 - uglifyjs
 - rm -rf
-- also used: nproc, ps aux | grep
+- nproc
+- ps aux | grep
 
 
 Translations in en-US (english/United-States) by:
-- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2011-2023
+- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2011-2024
 Translations in fr-FR (français/France) by:
-- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2011-2023
+- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2011-2024
 
 If you like, take some of your time to improve the translations, go to https://bit.ly/2HyCCEc
+
+
+File: /app/code/community/Luigifab/Minifier/Model/Useragentparser.php
+Source: https://github.com/donatj/PhpUserAgent + https://gist.github.com/luigifab/4cb373e75f3cd2f342ca6bc25504b149 (1.8.0-fork2)
+Copyright: 2013-2023 Jesse G. Donat <donatj~gmail~com>
+Copyright: 2019-2023 Fabrice Creuzot (luigifab) <code~luigifab~fr>
+License: MIT (https://opensource.org/licenses/mit)

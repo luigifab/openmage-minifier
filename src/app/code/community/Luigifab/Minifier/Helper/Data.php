@@ -1,9 +1,9 @@
 <?php
 /**
  * Created S/20/06/2015
- * Updated J/05/01/2023
+ * Updated S/09/12/2023
  *
- * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2011-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-minifier
  *
  * This program is free software, you can redistribute it or modify
@@ -69,8 +69,9 @@ class Luigifab_Minifier_Helper_Data extends Mage_Core_Helper_Abstract {
 		return Zend_Locale_Format::toNumber($value, $options);
 	}
 
-	public function getNumberToHumanSize(int $number) {
+	public function getNumberToHumanSize($number) {
 
+		$number = (float) $number;
 		if ($number < 1) {
 			$data = '';
 		}
@@ -165,7 +166,7 @@ class Luigifab_Minifier_Helper_Data extends Mage_Core_Helper_Abstract {
 			'#\s*/?/?]]></script>#',
 			'#<br ?/?>\s+#',
 			'#</code>\s</pre>#',
-			'#\s+</textarea>#'
+			'#\s+</textarea>#',
 		], [
 			'css">',
 			'</style',
@@ -178,7 +179,7 @@ class Luigifab_Minifier_Helper_Data extends Mage_Core_Helper_Abstract {
 			"\n//]]></script>",
 			'<br/>',
 			'</code></pre>',
-			'</textarea>'
+			'</textarea>',
 		], $html);
 	}
 

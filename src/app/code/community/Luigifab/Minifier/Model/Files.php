@@ -1,9 +1,9 @@
 <?php
 /**
  * Created W/13/04/2016
- * Updated J/05/10/2023
+ * Updated S/23/12/2023
  *
- * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2011-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2022-2023 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://github.com/luigifab/openmage-minifier
  *
@@ -50,32 +50,89 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 		if (empty($items)) {
 
 			$debug = 'load files from layout';
-			$items = $this->searchFiles($design, $storeId);
+			$items = $this->searchFilesFromLayout($design, $storeId);
 
 			if (Mage::app()->useCache('layout'))
 				Mage::app()->saveCache(json_encode($items), 'minifier_layout_'.$ckey,
 					[Mage_Core_Model_Layout_Update::LAYOUT_GENERAL_CACHE_TAG]);
 		}
 
-		// minifie les fichiers sources (et change la clé)
-		// attention lorsque les fichiers sont en cache et que les fichiers sont supprimés sans vider le cache
-		//  les fichiers virtuels ne seront pas régénérés car il faut passer dans searchFiles avant minifyFiles
-		$hasChange = $this->minifyFiles($items);
-		if ($hasChange && (Mage::getStoreConfig('minifier/cssjs/solution') == 1)) {
-			$value = Mage::getSingleton('core/date')->date('YmdHis');
-			Mage::getModel('core/config')->saveConfig('minifier/cssjs/value', $value);
-			Mage::getConfig()->reinit(); // très important
+		// si quelqu'un d'autre minifie/merge les fichiers, patiente le temps que ça se termine (maximum 90 secondes)
+		// pour ne pas faire la même chose
+		$lock = Mage::getBaseDir('var').'/minifier.lock';
+		while (is_file($lock)) {
+			if ((filemtime($lock) + 90) < time()) {
+				unlink($lock);
+				break;
+			}
+			usleep(500000); // 0.5 s
+			clearstatcache(true, $lock);
 		}
 
-		// génère le html
+		// minifie les fichiers (et change la clé) si nécessaire
+		// attention lorsque les fichiers sont en cache et que les fichiers sont supprimés sans vider le cache
+		// les fichiers virtuels ne seront pas régénérés car il faut passer dans searchFilesFromLayout avant minifyFiles
+		$files = [];
 		foreach ($items as $file => $data) {
 
-			$fileName = $dir.$file;
-			if ($data['merge'] && ($hasChange || !is_file($fileName)))
-				$this->mergeFiles($fileName, $data);
+			$merge = false;
+
+			foreach ($data['files'] as $source => $cache) {
+				if (is_file($source) && !is_file($cache)) {
+					$files['minify'][$source] = $cache;
+					$merge = true;
+				}
+			}
+
+			$dest = $dir.$file;
+			if ($data['merge'] && ($merge || !is_file($dest)))
+				$files['merge'][$dest] = array_values($data['files']);
+		}
+
+		if (!empty($files)) {
+
+			exec(sprintf('command -v php%d.%d || command -v php', PHP_MAJOR_VERSION, PHP_MINOR_VERSION), $cmd);
+			$cmd = trim(implode($cmd));
+			if (empty($cmd))
+				Mage::throwException('PHP not found');
+
+			file_put_contents($lock, getenv('REMOTE_ADDR').' '.(getenv('HTTP_USER_AGENT') ?? 'unknown'));
+			ignore_user_abort(true);
+			set_time_limit(300);
+
+			$log = Mage::getBaseDir('log');
+			if (!is_dir($log))
+				@mkdir($log, 0755);
+			$log .= '/minifier.log';
+
+			// leaves 2 cores free, but because $runs include grep check, we add 2 for $maxc
+			// [] => 18:14 0:00 php ...
+			// [] => 18:14 0:00 sh -c ps aux | grep Minifier/lib/minify.php
+			// [] => 18:14 0:00 grep Minifier/lib/minify.php
+			$maxc = 2 + max(1, Mage::helper('minifier')->getNumberOfCpuCore() - 2);
+
+			// [source file => cache file]
+			if (!empty($files['minify']))
+				$this->minifyFiles($cmd, $maxc, $log, $files['minify']);
+
+			// [dest file => [cache files]]
+			if (!empty($files['merge']))
+				$this->mergeFiles($cmd, $maxc, $log, $files['merge']);
+
+			if (Mage::getStoreConfig('minifier/cssjs/solution') == '1') {
+				$value = Mage::getSingleton('core/date')->date('YmdHis');
+				Mage::getModel('core/config')->saveConfig('minifier/cssjs/value', $value);
+				Mage::getConfig()->reinit();
+			}
+
+			unlink($lock);
+		}
+
+		// html
+		foreach ($items as $file => $data) {
 
 			$url = Mage::getBaseUrl('media').'minifier-zzyyxx/'.$file;
-			$url = $design->getFinalUrl($fileName, $url);
+			$url = $design->getFinalUrl($dir.$file, $url);
 
 			$items[$file]['html'] = $data['css'] ?
 				sprintf('<link rel="stylesheet" media="%s" type="text/css" href="%s" />', $data['media'], $url) :
@@ -95,123 +152,114 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 	}
 
 	// utilise uglify-js et clean-css
-	protected function minifyFiles(array $items) {
+	protected function minifyFiles(string $php, int $maxc, string $log, array $files) {
 
-		$pids  = [];
-		$files = [];
-		$new   = false;
+		$pids = [];
 
-		$dir = Mage::getBaseDir('log');
-		if (!is_dir($dir))
-			@mkdir($dir, 0755);
-
-		// rassemble les fichiers à minifier
-		foreach ($items as $item)
-			$files += $item['files'];
-
-		// si un client est déjà en train de générer des fichiers
-		// nous attendons (au maximum 45 secondes) que ce soit finit pour ne pas commencer à faire la même chose
-		$lock = Mage::getBaseDir('var').'/minifier.lock';
-		while (is_file($lock) && ((filemtime($lock) + 45) > time())) {
-			usleep(500000); // 0.5 s
-			clearstatcache(true, $lock);
-		}
-
-		// minifie les fichiers
-		// https://medium.com/async-php/multi-process-php-94a4e5a4be05
+		// @see https://medium.com/async-php/multi-process-php-94a4e5a4be05
 		foreach ($files as $source => $cache) {
 
-			if (is_file($source) && !is_file($cache)) {
-
-				if (empty($maxc)) {
-					// leaves 2 cores free, but because $runs include grep check, we add 2 for $maxc
-					// [] => 18:14 0:00 php ...
-					// [] => 18:14 0:00 sh -c ps aux | grep Minifier/lib/minify.php
-					// [] => 18:14 0:00 grep Minifier/lib/minify.php
-					$maxc = 2 + max(1, Mage::helper('minifier')->getNumberOfCpuCore() - 2);
+			while (count($pids) >= $maxc) {
+				usleep(100000); // 0.1 s
+				foreach ($pids as $key => $pid) {
+					if (file_exists('/proc/'.$pid))
+						clearstatcache(true, '/proc/'.$pid);
+					else
+						unset($pids[$key]);
 				}
+			}
 
-				while (count($pids) >= $maxc) {
-					foreach ($pids as $key => $pid) {
-						if (file_exists('/proc/'.$pid))
-							clearstatcache('/proc/'.$pid);
-						else
-							unset($pids[$key]);
-					}
-					usleep(100000); // 0.1 s
-				}
-
+			$runs = [];
+			exec('ps aux | grep Minifier/lib/minify.php', $runs);
+			while (count($runs) >= $maxc) {
+				usleep(90000); // 0.09 s
 				$runs = [];
 				exec('ps aux | grep Minifier/lib/minify.php', $runs);
-				while (count($runs) >= $maxc) {
-					usleep(90000); // 0.09 s
-					$runs = [];
-					exec('ps aux | grep Minifier/lib/minify.php', $runs);
-				}
-
-				clearstatcache(true, $lock);
-				if (!is_file($lock))
-					file_put_contents($lock, getenv('REMOTE_ADDR'), LOCK_EX);
-
-				$outdated = preg_replace('#\.[a-z\d]+\.min\.#', '*.min.', $cache);
-				array_map('unlink', glob($outdated));
-
-				$new = true;
-				$cmd = sprintf('%s %s %s %s %s %d >> %s 2>&1 & echo $!',
-					'php'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION,
-					str_replace('Minifier/etc', 'Minifier/lib/minify.php', Mage::getModuleDir('etc', 'Luigifab_Minifier')),
-					(mb_stripos($source, '.css') === false) ? 'js' : 'css',
-					escapeshellarg($source),
-					escapeshellarg($cache),
-					Mage::getIsDeveloperMode() ? 1 : 0,
-					$dir.'/minifier.log');
-
-				Mage::log($cmd, Zend_Log::DEBUG, 'minifier.log');
-				$pids[] = exec($cmd);
 			}
+
+			$outdated = preg_replace('#\.[a-z\d]+\.min\.#', '*.min.', $cache);
+			array_map('unlink', glob($outdated));
+
+			$cmd = sprintf('%s %s %s %s %s %d >> %s 2>&1 & echo $!',
+				escapeshellcmd($php),
+				str_replace('Minifier/etc', 'Minifier/lib/minify.php', Mage::getModuleDir('etc', 'Luigifab_Minifier')),
+				(mb_stripos($source, '.css') === false) ? 'js' : 'css',
+				escapeshellarg($source),
+				escapeshellarg($cache),
+				Mage::getIsDeveloperMode() ? 1 : 0,
+				$log);
+
+			Mage::log($cmd, Zend_Log::DEBUG, 'minifier.log');
+			$pids[] = exec($cmd);
 		}
 
 		while (!empty($pids)) {
+			usleep(100000); // 0.1 s
 			foreach ($pids as $key => $pid) {
 				if (file_exists('/proc/'.$pid))
-					clearstatcache('/proc/'.$pid);
+					clearstatcache(true, '/proc/'.$pid);
 				else
 					unset($pids[$key]);
 			}
-			usleep(100000); // 0.1 s
 		}
 
-		// débloque tout le monde
-		clearstatcache(true, $lock);
-		if (is_file($lock))
-			unlink($lock);
-
-		return $new;
+		return $this;
 	}
 
-	protected function mergeFiles(string $dest, array $data) {
+	protected function mergeFiles(string $php, int $maxc, string $log, array $files) {
 
-		$dir = Mage::getBaseDir('log');
-		if (!is_dir($dir))
-			@mkdir($dir, 0755);
+		$pids = [];
 
-		$files = array_values($data['files']);
-		foreach ($files as $idx => $file) {
-			if (!is_file($file))
-				unset($files[$idx]);
+		// https://medium.com/async-php/multi-process-php-94a4e5a4be05
+		foreach ($files as $dest => $sources) {
+
+			while (count($pids) >= $maxc) {
+				usleep(100000); // 0.1 s
+				foreach ($pids as $key => $pid) {
+					if (file_exists('/proc/'.$pid))
+						clearstatcache(true, '/proc/'.$pid);
+					else
+						unset($pids[$key]);
+				}
+			}
+
+			$runs = [];
+			exec('ps aux | grep Minifier/lib/minify.php', $runs);
+			while (count($runs) >= $maxc) {
+				usleep(90000); // 0.09 s
+				$runs = [];
+				exec('ps aux | grep Minifier/lib/minify.php', $runs);
+			}
+
+			foreach ($sources as $idx => $file) {
+				if (!is_file($file))
+					unset($sources[$idx]);
+			}
+
+			$cmd = sprintf('%s %s %s %s %s %d >> %s 2>&1 & echo $!',
+				escapeshellcmd($php),
+				str_replace('Minifier/etc', 'Minifier/lib/minify.php', Mage::getModuleDir('etc', 'Luigifab_Minifier')),
+				(mb_stripos($dest, '.js') === false) ? 'mergecss' : 'mergejs',
+				implode(',', array_map('escapeshellarg', $sources)),
+				escapeshellarg($dest),
+				Mage::getIsDeveloperMode() ? 1 : 0,
+				$log);
+
+			Mage::log($cmd, Zend_Log::DEBUG, 'minifier.log');
+			$pids[] = exec($cmd);
 		}
 
-		$cmd = sprintf('%s %s %s %s %s %d >> %s 2>&1',
-			'php'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION,
-			str_replace('Minifier/etc', 'Minifier/lib/minify.php', Mage::getModuleDir('etc', 'Luigifab_Minifier')),
-			(mb_stripos($dest, '.js') === false) ? 'mergecss' : 'mergejs',
-			implode(',', array_map('escapeshellarg', $files)),
-			escapeshellarg($dest),
-			Mage::getIsDeveloperMode() ? 1 : 0,
-			$dir.'/minifier.log');
+		while (!empty($pids)) {
+			usleep(100000); // 0.1 s
+			foreach ($pids as $key => $pid) {
+				if (file_exists('/proc/'.$pid))
+					clearstatcache(true, '/proc/'.$pid);
+				else
+					unset($pids[$key]);
+			}
+		}
 
-		Mage::log($cmd, Zend_Log::DEBUG, 'minifier.log');
-		exec($cmd);
+		return $this;
 	}
 
 	// prend un soin tout particulier à ignorer les données de oauth
@@ -232,7 +280,7 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 		return call_user_func_array([Mage::helper($helperName), $helperMethod], $attributes);
 	}
 
-	protected function searchFiles(object $design, int $storeId) {
+	protected function searchFilesFromLayout(object $design, int $storeId) {
 
 		//$ignores = array_filter(preg_split('#\s+#', Mage::getStoreConfig('minifier/cssjs/exclude')));
 		$removed = [];
@@ -301,7 +349,6 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 
 			if (empty($config) || Mage::getStoreConfigFlag($config, $storeId)) {
 
-				// récupère les nodes utiles
 				$nodes = [];
 				foreach ($element->childNodes as $node) {
 					if ($node->nodeType == 1)
@@ -329,7 +376,6 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 
 			if (empty($config) || Mage::getStoreConfigFlag($config, $storeId)) {
 
-				// récupère les nodes utiles
 				$nodes = [];
 				foreach ($element->childNodes as $node) {
 					if ($node->nodeType == 1)
@@ -356,7 +402,7 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 					if (empty($if) && !empty($name)) {
 						if ($type == 'js') {
 
-							$source = $this->getRealSource(Mage::getBaseDir().'/js/'.$name);
+							$source = $this->getRealSource(BP.'/js/'.$name);
 							$media  = $this->getFileMedia($name);
 							$final  = $this->getFinalName($pack, $media);
 
@@ -370,7 +416,7 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 						}
 						else if ($type == 'js_css') {
 
-							$source = $this->getRealSource(Mage::getBaseDir().'/js/'.$name);
+							$source = $this->getRealSource(BP.'/js/'.$name);
 							$media  = $this->getFileMedia($params);
 							$final  = $this->getFinalName($pack, $media);
 
@@ -456,7 +502,7 @@ class Luigifab_Minifier_Model_Files extends Mage_Core_Model_Layout_Update {
 
 					if (empty($if) && !empty($name)) {
 
-						$source = $this->getRealSource(Mage::getBaseDir().'/js/'.$name);
+						$source = $this->getRealSource(BP.'/js/'.$name);
 						$media  = $this->getFileMedia($name);
 						$final  = $this->getFinalName($pack, $media);
 

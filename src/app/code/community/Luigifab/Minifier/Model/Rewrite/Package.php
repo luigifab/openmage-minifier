@@ -1,9 +1,9 @@
 <?php
 /**
  * Created J/12/11/2020
- * Updated J/17/11/2022
+ * Updated S/23/12/2023
  *
- * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2011-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2022-2023 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://github.com/luigifab/openmage-minifier
  *
@@ -99,6 +99,6 @@ class Luigifab_Minifier_Model_Rewrite_Package extends Mage_Core_Model_Design_Pac
 	}
 
 	public function getJsUrl($file = null) {
-		return $this->getFinalUrl(Mage::getBaseDir().'/js/'.$file, trim(Mage::getBaseUrl('js'), '/').'-zzyyxx/'.$file);
+		return $this->getFinalUrl(BP.'/js/'.$file, trim(Mage::getBaseUrl('js'), '/').'-zzyyxx/'.$file);
 	}
 }

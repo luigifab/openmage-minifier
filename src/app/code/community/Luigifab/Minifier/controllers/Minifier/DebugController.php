@@ -1,9 +1,9 @@
 <?php
 /**
  * Created D/15/11/2020
- * Updated D/15/11/2020
+ * Updated S/09/12/2023
  *
- * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2011-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-minifier
  *
  * This program is free software, you can redistribute it or modify
@@ -24,8 +24,15 @@ class Luigifab_Minifier_Minifier_DebugController extends Luigifab_Minifier_Debug
 	protected $_sessionNamespace = Mage_Adminhtml_Controller_Action::SESSION_NAMESPACE;
 
 	public function preDispatch() {
+
 		$this->getLayout()->setArea('adminhtml');
+		$this->getResponse()
+			->setHeader('Cache-Control', 'no-cache, must-revalidate', true)
+			->setHeader('X-Robots-Tag', 'noindex, nofollow', true);
+
 		Mage::dispatchEvent('adminhtml_controller_action_predispatch_start', []);
 		Mage_Core_Controller_Varien_Action::preDispatch();
+
+		return $this;
 	}
 }

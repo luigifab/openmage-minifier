@@ -1,9 +1,9 @@
 <?php
 /**
  * Created J/26/07/2018
- * Updated S/19/02/2022
+ * Updated S/11/11/2023
  *
- * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2011-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-minifier
  *
  * This program is free software, you can redistribute it or modify
@@ -17,21 +17,21 @@
  * GNU General Public License (GPL) for more details.
  */
 
-$help = $this->helper('minifier');
+$helper = $this->helper('minifier');
 ?>
 
-<title><?php echo $help->escapeEntities(html_entity_decode($this->getTitle())) ?></title>
+<title><?php echo $helper->escapeEntities(html_entity_decode($this->getTitle())) ?></title>
 <meta http-equiv="Content-Type" content="<?php echo $this->getContentType() ?>" />
 <meta http-equiv="Content-Script-Type" content="text/javascript" />
 <meta http-equiv="Content-Style-Type" content="text/css" />
 <meta http-equiv="Content-Language" content="<?php echo $this->getParentBlock()->getLang() ?>" />
-<meta name="robots" content="<?php echo $help->escapeEntities($this->getRobots(), true) ?>" />
+<meta name="robots" content="<?php echo $helper->escapeEntities($this->getRobots(), true) ?>" />
 
 <?php if (!empty($text = $this->getDescription())): ?>
-	<meta name="description" content="<?php echo $help->escapeEntities($text, true) ?>" />
+	<meta name="description" content="<?php echo $helper->escapeEntities($text, true) ?>" />
 <?php endif ?>
 <?php if (!empty($text = $this->getKeywords())): ?>
-	<meta name="keywords" content="<?php echo $help->escapeEntities($text, true) ?>" />
+	<meta name="keywords" content="<?php echo $helper->escapeEntities($text, true) ?>" />
 <?php endif ?>
 
 <link rel="icon" type="image/x-icon" href="<?php echo $this->getSkinUrl('favicon.ico') ?>" />

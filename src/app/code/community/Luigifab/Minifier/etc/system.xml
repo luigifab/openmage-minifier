@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created L/27/06/2011
- * Updated V/20/05/2022
+ * Updated D/24/12/2023
  *
- * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2011-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-minifier
  *
  * This program is free software, you can redistribute it or modify
@@ -49,7 +49,7 @@
 					<fields>
 						<autolang translate="label">
 							<label>Automatically set the language of the backend</label>
-							<comment>HTTP_ACCEPT_LANGUAGE</comment>
+							<comment><![CDATA[<em>HTTP_ACCEPT_LANGUAGE</em>]]></comment>
 							<frontend_type>select</frontend_type>
 							<source_model>adminhtml/system_config_source_yesno</source_model>
 							<sort_order>1</sort_order>

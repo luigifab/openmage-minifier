@@ -1,9 +1,9 @@
 <?php
 /**
  * Created D/20/05/2018
- * Updated J/09/03/2023
+ * Updated S/09/12/2023
  *
- * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2011-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-minifier
  *
  * This program is free software, you can redistribute it or modify
@@ -25,14 +25,14 @@ class Luigifab_Minifier_Block_Calendar extends Mage_Core_Block_Html_Calendar {
 		$days = Zend_Locale_Data::getList($locale, 'days');
 		$this->assign('days', [
 			'wide'        => json_encode(array_values($days['format']['wide'])),
-			'abbreviated' => json_encode(array_values($days['format']['abbreviated']))
+			'abbreviated' => json_encode(array_values($days['format']['abbreviated'])),
 		]);
 
 		// get months names
 		$months = Zend_Locale_Data::getList($locale, 'months');
 		$this->assign('months', [
 			'wide'        => json_encode(array_values($months['format']['wide'])),
-			'abbreviated' => json_encode(array_values($months['format']['abbreviated']))
+			'abbreviated' => json_encode(array_values($months['format']['abbreviated'])),
 		]);
 
 		// get "today" and "week" words

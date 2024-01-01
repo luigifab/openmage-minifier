@@ -1,9 +1,9 @@
 <?php
 /**
  * Created V/15/04/2016
- * Updated V/10/02/2023
+ * Updated S/11/11/2023
  *
- * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2011-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-minifier
  *
  * This program is free software, you can redistribute it or modify
@@ -16,11 +16,9 @@
  * merchantability or fitness for a particular purpose. See the
  * GNU General Public License (GPL) for more details.
  */
-
-$help = $this->helper('minifier');
 ?>
 
-<title><?php echo $help->escapeEntities(html_entity_decode($this->getTitle())) ?></title>
+<title><?php echo $this->helper('minifier')->escapeEntities(html_entity_decode($this->getTitle())) ?></title>
 <meta http-equiv="Content-Type" content="<?php echo $this->getContentType() ?>" />
 <meta http-equiv="Content-Script-Type" content="text/javascript" />
 <meta http-equiv="Content-Style-Type" content="text/css" />

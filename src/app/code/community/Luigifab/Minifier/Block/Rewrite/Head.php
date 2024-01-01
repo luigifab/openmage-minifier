@@ -1,9 +1,9 @@
 <?php
 /**
  * Created M/01/09/2015
- * Updated D/15/11/2020
+ * Updated D/03/12/2023
  *
- * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2011-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-minifier
  *
  * This program is free software, you can redistribute it or modify
@@ -25,7 +25,8 @@ class Luigifab_Minifier_Block_Rewrite_Head extends Mage_Page_Block_Html_Head {
 
 	public function getCssJsHtml() {
 
-		$items = Mage::getSingleton('minifier/files')->getMinifiedFiles(Mage::app()->getStore()->getId());
+		// @todo (int) for strict_types=1
+		$items = Mage::getSingleton('minifier/files')->getMinifiedFiles((int) Mage::app()->getStore()->getId());
 
 		if (!empty($items)) {
 
@@ -47,20 +48,20 @@ class Luigifab_Minifier_Block_Rewrite_Head extends Mage_Page_Block_Html_Head {
 
 		foreach ($staticItems as $params => $rows) {
 			$params = trim($params);
-			foreach ($rows as $name)
-				$items[$params][] = $design->getJsUrl($name);
+			foreach ($rows as $row)
+				$items[$params][] = $design->getJsUrl($row);
 		}
 
 		foreach ($skinItems as $params => $rows) {
 			$params = trim($params);
-			foreach ($rows as $name)
-				$items[$params][] = $design->getSkinUrl($name);
+			foreach ($rows as $row)
+				$items[$params][] = $design->getSkinUrl($row);
 		}
 
 		foreach ($items as $params => $rows) {
 			$params = empty($params) ? '' : ' '.$params;
-			foreach ($rows as $src)
-				$html .= sprintf($format, $src, $params);
+			foreach ($rows as $row)
+				$html .= sprintf($format, $row, $params);
 		}
 
 		return $html;

@@ -1,9 +1,9 @@
 <?php
 /**
  * Created L/14/02/2022
- * Updated J/20/10/2022
+ * Updated S/11/11/2023
  *
- * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2011-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-minifier
  *
  * This program is free software, you can redistribute it or modify
@@ -24,11 +24,11 @@ class Luigifab_Minifier_Model_Source_Cache {
 	public function toOptionArray() {
 
 		if (empty($this->_options)) {
-			$help = Mage::helper('minifier');
+			$helper = Mage::helper('minifier');
 			$this->_options = [
 				['value' => 0, 'label' => Mage::helper('adminhtml')->__('No')],
-				['value' => 1, 'label' => $help->__('Yes - global (bellow)')],
-				['value' => 2, 'label' => $help->__('Yes - by file (filemtime)')],
+				['value' => 1, 'label' => $helper->__('Yes - global (bellow)')],
+				['value' => 2, 'label' => $helper->__('Yes - by file (filemtime)')],
 			];
 		}
 

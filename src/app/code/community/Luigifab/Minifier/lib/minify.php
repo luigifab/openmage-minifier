@@ -1,9 +1,9 @@
 <?php
 /**
  * Created S/14/07/2018
- * Updated J/08/06/2023
+ * Updated J/28/12/2023
  *
- * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2011-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-minifier
  *
  * This program is free software, you can redistribute it or modify
@@ -19,7 +19,7 @@
 
 chdir(dirname($argv[0], 7)); // root
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', (PHP_VERSION_ID < 80100) ? '1' : 1);
 
 if (PHP_SAPI != 'cli')
 	exit(-1);
@@ -31,12 +31,11 @@ if (is_file('app/bootstrap.php'))
 $action = empty($argv[1]) ? false : $argv[1]; // css ou js
 $source = empty($argv[2]) ? false : $argv[2]; // fichier(s) source (fichier(s) existant séparés par des virgules)
 $dest   = empty($argv[3]) ? false : $argv[3]; // fichier cache     (fichier inexistant)
-$dev    = empty($argv[4]) ? false : true;
+$dev    = !empty($argv[4]);
 
 if (!empty($action) && !empty($source) && !empty($dest)) {
 
 	require_once('app/Mage.php');
-
 	Mage::app('admin')->setUseSessionInUrl(false);
 	Mage::setIsDeveloperMode($dev);
 
@@ -45,7 +44,7 @@ if (!empty($action) && !empty($source) && !empty($dest)) {
 		chdir(dirname($dest));
 
 		if ($action == 'mergecss') {
-			// https://github.com/jakubpawlowicz/clean-css-cli
+			// @see https://github.com/jakubpawlowicz/clean-css-cli
 			$program = Mage::getStoreConfig('minifier/cssjs/cleancss');
 			if ((!empty($program) && is_executable($program)) || is_executable($program = '/usr/bin/cleancss')) {
 				exec(sprintf(
@@ -59,8 +58,8 @@ if (!empty($action) && !empty($source) && !empty($dest)) {
 			Mage::throwException('cleancss not found');
 		}
 
-		if (($action == 'mergejs') || (stripos($dest, 'virtual-') !== false)) {
-			// https://github.com/mishoo/uglifyjs
+		if (($action == 'mergejs') || (stripos($dest, 'virtual-') !== false)) { // not mb_stripos
+			// @see https://github.com/mishoo/uglifyjs
 			$program = Mage::getStoreConfig('minifier/cssjs/uglifyjs');
 			if ((!empty($program) && is_executable($program)) || is_executable($program = '/usr/bin/uglifyjs')) {
 				exec(sprintf(
@@ -76,7 +75,7 @@ if (!empty($action) && !empty($source) && !empty($dest)) {
 		}
 
 		if ($action == 'css') {
-			// https://github.com/jakubpawlowicz/clean-css-cli
+			// @see https://github.com/jakubpawlowicz/clean-css-cli
 			$program = Mage::getStoreConfig('minifier/cssjs/cleancss');
 			if ((!empty($program) && is_executable($program)) || is_executable($program = '/usr/bin/cleancss')) {
 				exec(sprintf(
@@ -91,7 +90,7 @@ if (!empty($action) && !empty($source) && !empty($dest)) {
 		}
 
 		if ($action == 'js') {
-			// https://github.com/mishoo/uglifyjs
+			// @see https://github.com/mishoo/uglifyjs
 			$program = Mage::getStoreConfig('minifier/cssjs/uglifyjs');
 			if ((!empty($program) && is_executable($program)) || is_executable($program = '/usr/bin/uglifyjs')) {
 				exec(sprintf(

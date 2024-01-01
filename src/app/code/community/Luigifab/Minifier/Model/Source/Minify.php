@@ -1,9 +1,9 @@
 <?php
 /**
  * Created M/24/03/2015
- * Updated J/20/10/2022
+ * Updated S/11/11/2023
  *
- * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2011-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-minifier
  *
  * This program is free software, you can redistribute it or modify
@@ -25,13 +25,13 @@ class Luigifab_Minifier_Model_Source_Minify {
 
 		if (empty($this->_options)) {
 
-			$help = Mage::helper('minifier');
-			$tidy = (class_exists('tidy', false) && extension_loaded('tidy')) ?
-				date('Ymd', strtotime(tidy_get_release())) : $help->__('not available');
+			$helper = Mage::helper('minifier');
+			$tidy   = (class_exists('tidy', false) && extension_loaded('tidy')) ?
+				date('Ymd', strtotime(tidy_get_release())) : $helper->__('not available');
 
 			$this->_options = [
 				['value' => 0, 'label' => Mage::helper('adminhtml')->__('No')],
-				['value' => 1, 'label' => $help->__('Yes with PHP-TIDY (%s)', $tidy)],
+				['value' => 1, 'label' => $helper->__('Yes with PHP-TIDY (%s)', $tidy)],
 			];
 		}
 

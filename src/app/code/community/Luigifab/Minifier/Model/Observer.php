@@ -1,9 +1,9 @@
 <?php
 /**
  * Created S/20/06/2015
- * Updated J/21/09/2023
+ * Updated S/09/12/2023
  *
- * Copyright 2011-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2011-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-minifier
  *
  * This program is free software, you can redistribute it or modify
@@ -27,7 +27,7 @@ class Luigifab_Minifier_Model_Observer extends Luigifab_Minifier_Helper_Data {
 			Mage::getBaseDir('media').'/css/',
 			Mage::getBaseDir('media').'/css_secure/',
 			Mage::getBaseDir('media').'/js_secure/',
-			Mage::getBaseDir('media').'/js/'
+			Mage::getBaseDir('media').'/js/',
 		];
 
 		exec('rm -rf '.implode(' ', array_map('escapeshellarg', $dirs)));
@@ -42,7 +42,7 @@ class Luigifab_Minifier_Model_Observer extends Luigifab_Minifier_Helper_Data {
 		Mage::app()->cleanCache();
 		Mage::dispatchEvent('adminhtml_cache_flush_system');
 
-		Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('adminhtml')->__('The OpenMage cache storage has been flushed.'));
+		Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('adminhtml')->__('The OpenMage cache has been flushed and updates applied.'));
 	}
 
 	// EVENT controller_action_predispatch_adminhtml_index_changeLocale (adminhtml)
@@ -72,8 +72,7 @@ class Luigifab_Minifier_Model_Observer extends Luigifab_Minifier_Helper_Data {
 
 		$codes = [];
 
-		// recherche des préférences dans HTTP_ACCEPT_LANGUAGE
-		// https://stackoverflow.com/a/33748742
+		// @see https://stackoverflow.com/a/33748742
 		// no mb_functions for locale codes
 		if (!empty(getenv('HTTP_ACCEPT_LANGUAGE'))) {
 
@@ -89,7 +88,6 @@ class Luigifab_Minifier_Model_Observer extends Luigifab_Minifier_Helper_Data {
 			$codes = array_map('\strval', array_keys($codes));
 		}
 
-		// ajoute la locale présente dans l'url en premier car elle est prioritaire
 		if (!empty($_GET['lang'])) {
 			$code = str_replace('-', '_', $_GET['lang']);
 			if (str_contains($code, '_'))
@@ -97,11 +95,10 @@ class Luigifab_Minifier_Model_Observer extends Luigifab_Minifier_Helper_Data {
 			array_unshift($codes, $code);
 		}
 
-		// cherche la locale à utiliser
 		foreach ($codes as $code) {
 
 			if ((strlen($code) >= 2) && !str_contains($code, '_')) {
-				// es devient es_ES de manière à prioriser es_ES au lieu d'utiliser es_XX
+				// es becomes es_ES to prioritize es_ES instead of es_XX
 				if (in_array($code.'_'.strtoupper($code), $locales)) {
 					$result = $code.'_'.strtoupper($code);
 					break;
